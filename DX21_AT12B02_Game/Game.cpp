@@ -1,0 +1,32 @@
+#include "Game.h"
+#include "Block.h"
+#include "Field.h"
+#include "Input/Keyboard.h"
+
+Field* g_pField;
+
+bool InitGame()
+{
+	g_pField = new Field;
+	return true;
+}
+void UninitGame()
+{
+	if (g_pField)
+	{
+		delete g_pField;
+		g_pField = nullptr;
+	}
+
+}
+
+void UpdateGame()
+{
+	UpdateKeyboard();
+	g_pField->Update();
+}
+
+void DrawGame()
+{
+	g_pField->Draw();
+}
