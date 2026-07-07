@@ -11,6 +11,7 @@ Field::Field()
 	,m_grid		 {}
 	,m_offset	 {}
 	,m_state	 ()
+	,m_check	 {}
 {
 	m_offset.x =   0.5f * (FIELD_COLUMN - 1.0f)	 * BLOCK_WIDTH;
 	m_offset.y =   0.5f * (FIELD_ROW - 1.0f)	 * BLOCK_HEIGHT;
@@ -121,8 +122,9 @@ void Field::UpdateCreate()
 	int x = FIELD_COLUMN / 2;
 	int y = 0;
 
-	//ブロックを生成
-	m_grid[y][x] = new Block(rand() % 3);
+	//ブロックを縦に２個生成（色数に合わせてランダム）
+	m_grid[y][x] = new Block(rand() % BLOCK_COLOR_NUM);
+	m_grid[y + 1][x] = new Block(rand() % BLOCK_COLOR_NUM);
 
 	// 生成したブロックの位置を、配列の添え字に該当する箇所へ移動 
 	Index index;
@@ -130,8 +132,7 @@ void Field::UpdateCreate()
 	index.y = y;
 	float2 pos = IndexToPos(index);
 	m_grid[y][x]->SetPos(pos.x, pos.y);
-
-
+	m_grid[y + 1][x]->SetPos(pos.x, pos.y + BLOCK_HEIGHT);
 
 	//ブロックの落下待機へ処理を変更
 	m_state = Field::State::IDLE;

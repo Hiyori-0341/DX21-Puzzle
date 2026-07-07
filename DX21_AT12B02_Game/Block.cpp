@@ -24,13 +24,17 @@ Block::Block(int color)
 	m_pVtx = CreateVertexBuffer(GetDevice(), vtx, _countof(vtx));	//_countof()配列の個数を数える
 
 	//テクスチャの読み込み
-	const char* texture[] = { "Image/Block/Block_Red.png",
-							  "Image/Block/Block_Green.png",
-							  "Image/Block/Block_Blue.png" };
-	HRESULT hr = LoadTextureFromFile(GetDevice(), texture[m_color], &m_pTexture);
+	const char* texture[BLOCK_COLOR_NUM] = {
+		"Image/Block/Block_Red.png",
+		"Image/Block/Block_Green.png",
+		"Image/Block/Block_Blue.png",
+	};
+	// 安全のためインデックス範囲チェック
+	int idx = m_color % BLOCK_COLOR_NUM;
+	HRESULT hr = LoadTextureFromFile(GetDevice(), texture[idx], &m_pTexture);
 
 	//エラー確認
-	if (FAILED(hr)) { MessageBox(NULL, texture[m_color], "Load Error", MB_OK); };
+	if (FAILED(hr)) { MessageBox(NULL, texture[idx], "Load Error", MB_OK); };
 }
 
 Block::~Block()

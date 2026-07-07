@@ -8,4 +8,5 @@
 #define FIELD_COLUMN (6)
 #define FIELD_ROW (12)
 
+#define BLOCK_COLOR_NUM (3)		//ブロックの色の種類
 #define BLOCK_ERACE_NUM (4)		//指定個数つながったらブロックを消す
