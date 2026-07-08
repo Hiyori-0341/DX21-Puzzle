@@ -7,6 +7,8 @@ constexpr float BLOCK_WIDTH  = 40.0f;			 //ブロックの横幅
 constexpr float BLOCK_HEIGHT = 40.0f;			 //ブロックの縦幅
 constexpr   int BLOCK_MOVE_WAIT_TIME = 60;		 //ブロックの落下移動までの待ち時間
 
+class Field;
+
 class Block
 {
 public:
@@ -29,9 +31,11 @@ private:
 	int    m_color;								 //ブロックの色
 	float2 m_pos;								 //座標
 
+	Field* m_pField;					//ブロックが配置されているフィールドのポインタ
+
 public:
 	//基本の処理
-	Block(int color);
+	Block(int color, Field *pField);
 	~Block();
 	void Update();
 	void Draw();

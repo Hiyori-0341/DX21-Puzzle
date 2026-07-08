@@ -13,6 +13,7 @@ Field::Field()
 	,m_offset	 {}
 	,m_state	 ()
 	,m_check	 {}
+	,m_isMoveRight (false)
 {
 	m_offset.x =   0.5f * (FIELD_COLUMN - 1.0f)	 * BLOCK_WIDTH;
 	m_offset.y =   0.5f * (FIELD_ROW - 1.0f)	 * BLOCK_HEIGHT;
@@ -116,6 +117,16 @@ void Field::Draw()
 	}
 }
 
+bool Field::IsMoveRight()
+{
+	return m_isMoveRight;
+}
+
+void Field::SetMoveRight(bool isMoveRight)
+{
+	m_isMoveRight = isMoveRight;
+}
+
 
 void Field::UpdateCreate()
 {
@@ -128,8 +139,8 @@ void Field::UpdateCreate()
 	int time = timeBeginPeriod(1);
 
 	//ブロックを縦に２個生成（色数に合わせてランダム）
-	m_grid[y][x] = new Block(rand() % BLOCK_COLOR_NUM);
-	m_grid[y + 1][x] = new Block(rand() % BLOCK_COLOR_NUM);
+	m_grid[y][x] = new Block(rand() % BLOCK_COLOR_NUM, this);
+	m_grid[y + 1][x] = new Block(rand() % BLOCK_COLOR_NUM, this);
 
 	// 生成したブロックの位置を、配列の添え字に該当する箇所へ移動 
 	Index index;
@@ -147,149 +158,48 @@ void Field::UpdateIdle()
 {
 	// 回転処理：__VK_UP__ が押されたら「移動中(MOVE)」の隣接した2ブロックのうち
 	// 見つかった組を1つだけ90度回転させる（右回り）。回転先が範囲外／他ブロックで塞がれていたら何もしない。
-	if (isKeyTrigger(VK_UP))
+	if (isKeyTrigger('X'))
 	{
-		bool rotated = false;
-		for (int y = 0; y < FIELD_ROW && !rotated; ++y)
+		RotateBlock(1);
+	}
+	if (isKeyTrigger('Z'))
+	{
+		RotateBlock(-1);
+	}
+
+	for (int y = FIELD_ROW - 1; y >= 0; --y)
+	{
+		if (m_isMoveRight)
 		{
-			for (int x = 0; x < FIELD_COLUMN && !rotated; ++x)
+			// 右移動中は右側のマスから処理
+			for (int x = FIELD_COLUMN - 1; x >= 0; --x)
 			{
-				Block* a = m_grid[y][x];
-				if (a == nullptr) continue;
-				if (a->GetState() != Block::MOVE) continue;
-
-				// 隣接方向を探索（上, 下, 左, 右）
-				struct Off { int dx, dy; };
-				Off offs[] = { {0,-1}, {0,1}, {-1,0}, {1,0} };
-
-				for (int i = 0; i < _countof(offs) && !rotated; ++i)
-				{
-					int nx = x + offs[i].dx;
-					int ny = y + offs[i].dy;
-					if (nx < 0 || nx >= FIELD_COLUMN || ny < 0 || ny >= FIELD_ROW) continue;
-
-					Block* b = m_grid[ny][nx];
-					if (b == nullptr) continue;
-					if (b->GetState() != Block::MOVE) continue;
-
-					// 'a' をピボットにして 'b' を回転させる
-					int dx = nx - x;
-					int dy = ny - y;
-					// 90度右回転 (x,y) -> (y, -x) （フィールドの y は下方向増加を想定）
-					int rdx = dy;
-					int rdy = -dx;
-					int tx = x + rdx;
-					int ty = y + rdy;
-
-					// 回転先チェック
-					if (tx < 0 || tx >= FIELD_COLUMN || ty < 0 || ty >= FIELD_ROW) continue;
-					Block* target = m_grid[ty][tx];
-					// 回転先が別のブロックで塞がれていたら不可（自分(b)がいる位置は既に cleared するため OK）
-					if (target != nullptr && target != b) continue;
-
-					// 実際に移動（配列と見た目座標）
-					m_grid[ny][nx] = nullptr;
-					m_grid[ty][tx] = b;
-					Index idx; idx.x = tx; idx.y = ty;
-					float2 newPos = IndexToPos(idx);
-					b->SetPos(newPos);
-
-					rotated = true;
-				}
+				syncBlock(x, y);
+			}
+		}
+		else
+		{
+			// 左移動・静止時は左側のマスから処理
+			for (int x = 0; x < FIELD_COLUMN; ++x)
+			{
+				syncBlock(x, y);
 			}
 		}
 	}
 
-	//全てのブロック座標を確認
-	for (int y = FIELD_ROW - 1; y >=  0; --y)
-	{
-		for (int x = 0; x < FIELD_COLUMN; ++x)
-		{
-			if (!m_grid[y][x]) continue;
-
-			//座標を取得
-			float2 pos = m_grid[y][x]->GetPos();
-
-			//フィールドの左端を超えていないか
-			if (m_offset.x > pos.x)
-			{
-				m_grid[y][x]->SetPos(m_offset.x, pos.y);
-			}
-
-			//フィールドの右端を超えていないか
-			if (-m_offset.x < pos.x)
-			{
-				m_grid[y][x]->SetPos(-m_offset.x, pos.y);
-			}
-
-			//フィールドの下端を超えていないか
-			if (-m_offset.y < pos.y)
-			{
-				m_grid[y][x]->SetPos(pos.x, -m_offset.y);
-
-				//ブロックを待機状態に変更
-				m_grid[y][x]->SetState(Block::IDLE);
-				//m_state = Field::CHECK;
-			}
-
-			//画面端補正の後に改めて座標を確認
-			pos = m_grid[y][x]->GetPos();
-
-			//配列の位置が更新されているかチェック
-			Index index = PosToIndex(pos);
-			//データの位置(x,y)と見た目の位置(index)が異なっていたらデータを更新する
-			// 移動先にブロックがあるか確認 
-			if (m_grid[index.y][index.x] != nullptr) 
-			{
-				//見た目の補正が２通り（上から侵入、横から侵入）あるため、
-				//どちらの補正を行うか判定
-				if (index.y != y)
-				{
-					index.y = y;	//見た目の位置をデータの位置で上書き
-					//見た目は動いてしまうので,インデックスは元の場所に戻す
-					pos = IndexToPos(index);
-					m_grid[y][x]->SetPos(pos);
-
-					//上に積みあがるのでブロックを停止
-					m_grid[y][x]->SetState(Block::IDLE);
-					//次のブロックを生成
-					//m_state = CHECK;
-				}
-				else
-				{//横から侵入したときの補正
-					index.x = x;//見た目の位置をデータの位置で上書き
-
-					//見た目は動いているのでインデックスから元の場所に戻す
-					pos = IndexToPos(index);
-					m_grid[y][x]->SetPos(pos);
-				}
-			}
-			else
-			{
-				//配置情報を更新
-				m_grid[index.y][index.x] = m_grid[y][x];
-				m_grid[y][x] = nullptr;
-			}
-		}
-	}
-
-	bool isIdle = true;	//チェック前からみなしで全部待機しているとする
-
-	//全てのブロックが待機状態か確認
+	bool isIdle = true;
 	for (int y = 0; y < FIELD_ROW; ++y)
 	{
 		for (int x = 0; x < FIELD_COLUMN; ++x)
 		{
-			//ブロックが無ければ以降の処理を行わない
-			if (m_grid[y][x] == nullptr)	continue;
-
-			//ブロックが待機状態なら処理を行わない
-			if (m_grid[y][x]->GetState() == Block::IDLE)	continue;
-
-			isIdle = false;		//待機状態ではないブロックがあるので、フラグをfalseに変更
+			if (m_grid[y][x] == nullptr) continue;
+			if (m_grid[y][x]->GetState() == Block::IDLE) continue;
+			isIdle = false;
 		}
 	}
 
+	if (isIdle)
+		m_state = Field::CHECK;
 	if(isIdle)
 		m_state = Field::CHECK;	//全てのブロックが待機状態ならチェックに切り替える
 }
@@ -527,5 +437,106 @@ void Field::RecursiveBlockDestroy(Index index)
 		if (pAround->GetColor() != pCenter->GetColor())	continue;
 
 		RecursiveBlockDestroy(aroundIndex[i]);
+	}
+}
+
+void Field::syncBlock(int x, int y)
+{
+	if (!m_grid[y][x]) return;
+
+	float2 pos = m_grid[y][x]->GetPos();
+
+	if (m_offset.x > pos.x)
+	{
+		m_grid[y][x]->SetPos(m_offset.x, pos.y);
+	}
+	if (-m_offset.x < pos.x)
+	{
+		m_grid[y][x]->SetPos(-m_offset.x, pos.y);
+	}
+	if (-m_offset.y < pos.y)
+	{
+		m_grid[y][x]->SetPos(pos.x, -m_offset.y);
+		m_grid[y][x]->SetState(Block::IDLE);
+	}
+
+	pos = m_grid[y][x]->GetPos();
+	Index index = PosToIndex(pos);
+
+	if (m_grid[index.y][index.x] != nullptr)
+	{
+		if (index.y != y)
+		{
+			index.y = y;
+			pos = IndexToPos(index);
+			m_grid[y][x]->SetPos(pos);
+			m_grid[y][x]->SetState(Block::IDLE);
+		}
+		else
+		{
+			index.x = x;
+			pos = IndexToPos(index);
+			m_grid[y][x]->SetPos(pos);
+		}
+	}
+	else
+	{
+		m_grid[index.y][index.x] = m_grid[y][x];
+		m_grid[y][x] = nullptr;
+	}
+}
+
+void Field::RotateBlock(int direction)
+{
+	bool rotated = false;
+	for (int y = 0; y < FIELD_ROW && !rotated; ++y)
+	{
+		for (int x = 0; x < FIELD_COLUMN && !rotated; ++x)
+		{
+			Block* firstBlock = m_grid[y][x];
+			if (firstBlock == nullptr) continue;
+			if (firstBlock->GetState() != Block::MOVE) continue;
+
+			// 隣接方向を探索（上, 下, 左, 右）
+			Index aroundIndex[] = { {0,-1}, {0,1}, {-1,0}, {1,0} };
+
+			for (int i = 0; i < _countof(aroundIndex) && !rotated; ++i)
+			{
+				int nx = x + aroundIndex[i].x;
+				int ny = y + aroundIndex[i].y;
+				if (nx < 0 || nx >= FIELD_COLUMN || ny < 0 || ny >= FIELD_ROW) continue;
+
+				Block* secondBlock = m_grid[ny][nx];
+				if (secondBlock == nullptr) continue;
+				if (secondBlock->GetState() != Block::MOVE) continue;
+
+				// firstBlock をピボットにして secondBlock を回転させる
+				int dx = nx - x;
+				int dy = ny - y;
+				// 90度右回転 (x,y) -> (y, -x) （フィールドの y は下方向増加を想定）
+				int rdx =  dy * direction;
+				int rdy = -dx * direction;
+				int tx = x + rdx;
+				int ty = y + rdy;
+
+				// 回転先チェック
+				if (tx < 0 || tx >= FIELD_COLUMN || ty < 0 || ty >= FIELD_ROW) continue;
+				Block* target = m_grid[ty][tx];
+				// 回転先が別のブロックで塞がれていたら不可（自分(b)がいる位置は既に cleared するため OK）
+				if (target != nullptr && target != secondBlock) continue;
+
+				// 実際に移動（配列と見た目座標）
+				m_grid[ny][nx] = nullptr;
+				m_grid[ty][tx] = secondBlock;
+				Index idx; 
+				idx.x = tx; 
+				idx.y = ty;
+
+				float2 newPos = IndexToPos(idx);
+				secondBlock->SetPos(newPos);
+
+				rotated = true;
+			}
+		}
 	}
 }

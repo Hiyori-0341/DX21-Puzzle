@@ -4,13 +4,16 @@
 #include "Input/Keyboard.h"
 #include "Field.h"
 
-Block::Block(int color)
+
+
+Block::Block(int color, Field *pField)
 	: m_pVtx(nullptr), m_pTexture(nullptr)
 	, m_state(Block::State::MOVE)
 	, m_color(color)
 	, m_pos{ 0.0f,0.0f }
 	, m_moveTimer(0)
 	, m_move{0.0f,0.0f}
+	, m_pField(pField)
 {
 	float width = BLOCK_WIDTH / 2;
 	float height = BLOCK_HEIGHT / 2;
@@ -112,10 +115,12 @@ void Block::UpdateMove()
 	if (isKeyRepeat(VK_LEFT) || isKeyTrigger(VK_LEFT))
 	{
 		m_pos.x -= BLOCK_WIDTH;
+		if (m_pField) m_pField->SetMoveRight(false);
 	}
 	if (isKeyRepeat(VK_RIGHT) || isKeyTrigger(VK_RIGHT))
 	{
 		m_pos.x += BLOCK_WIDTH;
+		if (m_pField) m_pField->SetMoveRight(true);
 	}
 	if (isKeyTrigger(VK_DOWN))
 	{

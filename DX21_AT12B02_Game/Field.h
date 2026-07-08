@@ -33,11 +33,15 @@ private:
 	//再起処理の確認済みフラグ
 	bool m_check[FIELD_ROW][FIELD_COLUMN];
 
+	bool m_isMoveRight;	//右に移動しているか
 public:
 	Field();
 	~Field();
 	void Update();
 	void Draw();
+
+	bool IsMoveRight();
+	void SetMoveRight(bool isMoveRight);
 
 private:
 	// ステート別の更新処理 
@@ -64,4 +68,10 @@ private:
 
 	//再起処理で同じブロックを削除する
 	void RecursiveBlockDestroy(Index index);
+
+	//同期処理
+	void syncBlock(int x, int y);
+	
+	//ブロックを回転させる
+	void RotateBlock(int direction);
 };
