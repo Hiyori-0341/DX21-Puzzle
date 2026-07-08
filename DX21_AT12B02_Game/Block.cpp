@@ -135,7 +135,7 @@ void Block::UpdateMove()
 void Block::UpdateFall()
 {
 	//重力によって移動速度が徐々に増加
-	m_move.y += 1.0f;
+	m_move.y += 0.8f;
 	//増加した速度分だけ移動
 	m_pos.y += m_move.y;
 

@@ -4,6 +4,7 @@
 #include "DirectXTex/TextureLoad.h"
 #include "Block.h"
 #include <sstream>
+#include "Input/Keyboard.h" // 追加：キー入力を使うため
 
 Field::Field()
 	:m_pFrameBuf (nullptr)
@@ -118,9 +119,13 @@ void Field::Draw()
 
 void Field::UpdateCreate()
 {
+	//乱数の初期化
+	srand((unsigned int)time(NULL));
+
 	//ブロックの生成場所を計算
 	int x = FIELD_COLUMN / 2;
 	int y = 0;
+	int time = timeBeginPeriod(1);
 
 	//ブロックを縦に２個生成（色数に合わせてランダム）
 	m_grid[y][x] = new Block(rand() % BLOCK_COLOR_NUM);
@@ -140,6 +145,61 @@ void Field::UpdateCreate()
 
 void Field::UpdateIdle()
 {
+	// 回転処理：__VK_UP__ が押されたら「移動中(MOVE)」の隣接した2ブロックのうち
+	// 見つかった組を1つだけ90度回転させる（右回り）。回転先が範囲外／他ブロックで塞がれていたら何もしない。
+	if (isKeyTrigger(VK_UP))
+	{
+		bool rotated = false;
+		for (int y = 0; y < FIELD_ROW && !rotated; ++y)
+		{
+			for (int x = 0; x < FIELD_COLUMN && !rotated; ++x)
+			{
+				Block* a = m_grid[y][x];
+				if (a == nullptr) continue;
+				if (a->GetState() != Block::MOVE) continue;
+
+				// 隣接方向を探索（上, 下, 左, 右）
+				struct Off { int dx, dy; };
+				Off offs[] = { {0,-1}, {0,1}, {-1,0}, {1,0} };
+
+				for (int i = 0; i < _countof(offs) && !rotated; ++i)
+				{
+					int nx = x + offs[i].dx;
+					int ny = y + offs[i].dy;
+					if (nx < 0 || nx >= FIELD_COLUMN || ny < 0 || ny >= FIELD_ROW) continue;
+
+					Block* b = m_grid[ny][nx];
+					if (b == nullptr) continue;
+					if (b->GetState() != Block::MOVE) continue;
+
+					// 'a' をピボットにして 'b' を回転させる
+					int dx = nx - x;
+					int dy = ny - y;
+					// 90度右回転 (x,y) -> (y, -x) （フィールドの y は下方向増加を想定）
+					int rdx = dy;
+					int rdy = -dx;
+					int tx = x + rdx;
+					int ty = y + rdy;
+
+					// 回転先チェック
+					if (tx < 0 || tx >= FIELD_COLUMN || ty < 0 || ty >= FIELD_ROW) continue;
+					Block* target = m_grid[ty][tx];
+					// 回転先が別のブロックで塞がれていたら不可（自分(b)がいる位置は既に cleared するため OK）
+					if (target != nullptr && target != b) continue;
+
+					// 実際に移動（配列と見た目座標）
+					m_grid[ny][nx] = nullptr;
+					m_grid[ty][tx] = b;
+					Index idx; idx.x = tx; idx.y = ty;
+					float2 newPos = IndexToPos(idx);
+					b->SetPos(newPos);
+
+					rotated = true;
+				}
+			}
+		}
+	}
+
 	//全てのブロック座標を確認
 	for (int y = FIELD_ROW - 1; y >=  0; --y)
 	{
@@ -350,7 +410,7 @@ Field::Index Field::PosToIndex(float2 pos)
 	//座標からインデックスに計算する際、左上が基準の座標出ないと
 	//計算の誤差で正しくないインデックスが取得される。
 	//ブロックは中心を基準としてるため、この計算の時だけ左上が
-	//基準(0,0)となるように計算。
+	//基準(0,0)となるように計算。 
 
 	//ブロックの原点を中心から左上に移動
 	pos.x += BLOCK_WIDTH * 0.5f;
