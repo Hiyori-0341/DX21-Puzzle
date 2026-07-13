@@ -4,6 +4,8 @@
 #include "DirectXTex/TextureLoad.h"
 #include "Block.h"
 #include <sstream>
+#include <xaudio2.h>
+#include <iostream>
 #include "Input/Keyboard.h" // 追加：キー入力を使うため
 
 Field::Field()
@@ -48,7 +50,9 @@ Field::Field()
 			
 		}
 	}
-}
+
+	//サウンドデータの読み込み
+	//m_pBlockDestroySE = LoadSound("読み込み用サウンドファイル");
 
 Field :: ~Field()
 {
@@ -100,6 +104,8 @@ void Field::Update()
 void Field::Draw()
 {
 	SetSpriteTexture(m_pFrameTex); // 表示する枠全てに同じ画像を適用 
+	SetSpriteScale(1.0f, 1.0f); // スケールを元に戻す
+
 	for (int y = 0; y < FIELD_ROW; ++y) {
 		for (int x = 0; x < FIELD_COLUMN; ++x) {
 			SetSpritePos(BLOCK_WIDTH * x + m_offset.x,
@@ -235,6 +241,11 @@ void Field::UpdateCheck()
 				RecursiveBlockDestroy(index);
 				//ブロックを消したので削除待ちのステートに切り替える
 				m_state = Field::DESTROY;
+				if(m_state == Field::DESTROY)
+				{
+					//サウンド再生
+					//PlaySound(m_pBlockDestroySE);
+				}
 			}
 
 //確認用にブロックの個数をMessageBox関数で表示する処理(使用しない場合は0に変更)
@@ -254,6 +265,9 @@ void Field::UpdateCheck()
 
 void Field::UpdateDestroy()
 {
+	//ブロックの削除アニメーションが終了しているか確認する
+	bool isDestroy = false;
+
 	//消す状態のブロックを実際に削除する
 	for (int y = 0; y < FIELD_ROW; ++y)
 	{
@@ -263,14 +277,20 @@ void Field::UpdateDestroy()
 			if(m_grid[y][x] == nullptr)	continue;
 
 			//ブロックが削除ステートなら削除する
-			if (m_grid[y][x]->GetState() == Block::DESTROY)
+			if (m_grid[y][x]->GetState() == Block::ERASE)
 			{
 				delete m_grid[y][x];
 				m_grid[y][x] = nullptr;
 			}
+			else if(m_grid[y][x]->GetState() == Block::DESTROY)
+			{
+				isDestroy = true;
+			}
 		}
 	}
 
+	if (!isDestroy)
+	{
 	//一度すべてのブロックを待機から落下状態に変更する
 	for (int y = 0; y < FIELD_ROW; ++y)
 	{
@@ -284,7 +304,9 @@ void Field::UpdateDestroy()
 		}
 	}
 
-	m_state = Field::IDLE;
+		//削除アニメーションが終了しているので、落下待機状態に切り替える
+		m_state = Field::IDLE;
+	}
 }
 
 void Field::UpdateGameOver()

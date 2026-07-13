@@ -3,6 +3,7 @@
 #include "Defines.h"
 #include "DirectX.h"
 #include "SpriteDrawer.h"
+//#include <xaudio2.h>
 
 class Field
 {
@@ -74,4 +75,9 @@ private:
 	
 	//ブロックを回転させる
 	void RotateBlock(int direction);
+
+
+private:
+	//サウンド
+	XAUDIO2_BUFFER* m_pBlockDestroySE;
 };

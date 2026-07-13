@@ -18,7 +18,8 @@ public:
 		IDLE,									 //待機中(ブロックが積まれている状態)
 		MOVE,									 //移動中(キー入力で左右移動)
 		FALL,									 //落下中(下キー入力と下のブロックが消えたとき)
-		DESTROY									 //ブロックが消えるとき
+		DESTROY,								 //ブロックが消えるとき
+		ERASE,									 //ブロックが消えた後の処理
 	};
 
 private:
@@ -60,4 +61,7 @@ private:
 	//移動に関係する処理
 	int m_moveTimer;	//落下までの時間
 	float2 m_move;		//移動スピード
+
+
+	int m_destroyTimer; //消えるアニメーション用のタイマー
 };

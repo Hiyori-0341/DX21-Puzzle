@@ -14,6 +14,7 @@ Block::Block(int color, Field *pField)
 	, m_moveTimer(0)
 	, m_move{0.0f,0.0f}
 	, m_pField(pField)
+	, m_destroyTimer(0)
 {
 	float width = BLOCK_WIDTH / 2;
 	float height = BLOCK_HEIGHT / 2;
@@ -68,6 +69,28 @@ void Block::Update()
 
 void Block::Draw()
 {
+	//削除ステートなら実行
+	if (m_state == State::DESTROY)
+	{
+		//点滅アニメーション
+		if (m_destroyTimer < BLOCK_DESTROY_FLASH_FRAME)
+		{
+			if (m_destroyTimer / BLOCK_DESTROY_FLASH_INTERVAL % 2 == 0)
+				SetSpriteScale(0.0f, 0.0f);
+			else
+				SetSpriteScale(1.0f, 1.0f);
+		}
+		//点滅フレーム後は爆発風の拡大
+		else
+		{
+			SetSpriteScale(BLOCK_DESTROY_BOMB_SCALE, BLOCK_DESTROY_BOMB_SCALE);
+		}
+	}
+	else
+	{
+		SetSpriteScale(1.0f, 1.0f);
+	}
+
 	//表示位置の変更
 	SetSpritePos(m_pos.x, m_pos.y);
 	//テクスチャを貼り付けて表示
@@ -148,6 +171,14 @@ void Block::UpdateFall()
 
 void Block::UpdateDestroy()
 {
+	//アニメーションタイマーの更新
+	++m_destroyTimer;
+
+	//アニメーションが終了したら状態をERASEに変更
+	if(m_destroyTimer > BLOCK_DESTROY_TOTAL_FRAME)
+	{
+		m_state = State::ERASE;
+	}
 }
 
 

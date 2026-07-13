@@ -53,7 +53,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// DirectXの初期化
 	if (!InitDirectX(hWnd, SCREEN_WIDTH, SCREEN_HEIGHT, FALSE))
 	{
-		MessageBox(NULL, "DirectXの初期化に失敗", "Error", MB_OK);
+		MessageBox(NULL, "Failed InitDirectX", "Error", MB_OK);
 		return 0;
 	}
 
@@ -62,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// Gameの初期化
 	if (!InitGame()) {
-		MessageBox(NULL, "ゲームの初期化失敗", "エラー", MB_OK);
+		MessageBox(NULL, "Failed InitGame", "Error", MB_OK);
 		return 0;
 	}
 

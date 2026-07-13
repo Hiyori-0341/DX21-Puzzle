@@ -10,3 +10,11 @@
 
 #define BLOCK_COLOR_NUM (3)		//ブロックの色の種類
 #define BLOCK_ERACE_NUM (4)		//指定個数つながったらブロックを消す
+
+//ブロック削除アニメーションの設定
+#define BLOCK_DESTROY_FLASH_CNT		 (4)	//点滅回数
+#define BLOCK_DESTROY_FLASH_INTERVAL (3)	//点滅間隔
+#define BLOCK_DESTROY_FLASH_FRAME    (BLOCK_DESTROY_FLASH_CNT * BLOCK_DESTROY_FLASH_INTERVAL * 2)
+#define BLOCK_DESTROY_BOMB_FRAME     (7)	//爆発フレーム
+#define BLOCK_DESTROY_TOTAL_FRAME    (BLOCK_DESTROY_FLASH_FRAME + BLOCK_DESTROY_BOMB_FRAME)	//合計フレーム数
+#define BLOCK_DESTROY_BOMB_SCALE     (1.2f)	//爆発の拡大率
