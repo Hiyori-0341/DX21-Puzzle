@@ -3,6 +3,7 @@
 #include "DirectX.h"
 #include "SpriteDrawer.h"
 #include "Game.h"
+#include "Input/Keyboard.h"
 
 #pragma comment(lib, "winmm.lib")
 
@@ -92,6 +93,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			nowTime = timeGetTime();
 			if (nowTime - oldTime >= 1000 / FPS)
 			{
+				UpdateKeyboard();
+
 				UpdateGame();
 				BeginDraw();
 				DrawGame();

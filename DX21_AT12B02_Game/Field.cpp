@@ -9,16 +9,16 @@
 #include "Input/Keyboard.h" // 追加：キー入力を使うため
 
 Field::Field()
-	:m_pFrameBuf (nullptr)
-	,m_pFrameTex (nullptr)
-	,m_grid		 {}
-	,m_offset	 {}
-	,m_state	 ()
-	,m_check	 {}
-	,m_isMoveRight (false)
+	:m_pFrameBuf(nullptr)
+	, m_pFrameTex(nullptr)
+	, m_grid{}
+	, m_offset{}
+	, m_state()
+	, m_check{}
+	, m_isMoveRight(false)
 {
-	m_offset.x =   0.5f * (FIELD_COLUMN - 1.0f)	 * BLOCK_WIDTH;
-	m_offset.y =   0.5f * (FIELD_ROW - 1.0f)	 * BLOCK_HEIGHT;
+	m_offset.x = 0.5f * (FIELD_COLUMN - 1.0f) * BLOCK_WIDTH;
+	m_offset.y = 0.5f * (FIELD_ROW - 1.0f) * BLOCK_HEIGHT;
 	m_offset.x = -m_offset.x;
 	m_offset.y = -m_offset.y;
 
@@ -47,12 +47,13 @@ Field::Field()
 		for (int j = 0; j < FIELD_COLUMN; j++)
 		{
 			m_grid[i][j] = nullptr;
-			
+
 		}
 	}
 
 	//サウンドデータの読み込み
 	//m_pBlockDestroySE = LoadSound("読み込み用サウンドファイル");
+}
 
 Field :: ~Field()
 {

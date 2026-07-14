@@ -135,6 +135,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Input\Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Sound\Sound.cpp" />
     <ClCompile Include="SpriteDrawer.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
@@ -147,6 +148,7 @@
     <ClInclude Include="Field.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Input\Keyboard.h" />
+    <ClInclude Include="Sound\Sound.h" />
     <ClInclude Include="SpriteDrawer.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>

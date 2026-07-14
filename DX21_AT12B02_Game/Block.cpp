@@ -70,7 +70,7 @@ void Block::Update()
 void Block::Draw()
 {
 	//削除ステートなら実行
-	if (m_state == State::DESTROY)
+	if (m_state == Block::DESTROY)
 	{
 		//点滅アニメーション
 		if (m_destroyTimer < BLOCK_DESTROY_FLASH_FRAME)

@@ -1,7 +1,6 @@
 #include "Game.h"
 #include "Block.h"
 #include "Field.h"
-#include "Input/Keyboard.h"
 
 Field* g_pField;
 
@@ -22,7 +21,6 @@ void UninitGame()
 
 void UpdateGame()
 {
-	UpdateKeyboard();
 	g_pField->Update();
 }
 
