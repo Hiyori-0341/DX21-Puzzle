@@ -3,7 +3,7 @@
 #include "Defines.h"
 #include "DirectX.h"
 #include "SpriteDrawer.h"
-#include <xaudio2.h>
+#include "Sound/Sound.h"
 
 class Field
 {

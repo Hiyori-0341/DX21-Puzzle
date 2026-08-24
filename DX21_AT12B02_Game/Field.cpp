@@ -3,10 +3,8 @@
 #include "VertexBuffer.h"
 #include "DirectXTex/TextureLoad.h"
 #include "Block.h"
-#include <sstream>
-#include <xaudio2.h>
 #include <iostream>
-#include "Input/Keyboard.h" // 追加：キー入力を使うため
+#include "Input/Keyboard.h" 
 
 Field::Field()
 	:m_pFrameBuf(nullptr)
@@ -50,9 +48,9 @@ Field::Field()
 
 		}
 	}
-
+	
 	//サウンドデータの読み込み
-	//m_pBlockDestroySE = LoadSound("読み込み用サウンドファイル");
+	m_pBlockDestroySE = LoadSound("Sound/selab_kyupi45.mp3");
 }
 
 Field :: ~Field()
@@ -242,13 +240,8 @@ void Field::UpdateCheck()
 				RecursiveBlockDestroy(index);
 				//ブロックを消したので削除待ちのステートに切り替える
 				m_state = Field::DESTROY;
-				if(m_state == Field::DESTROY)
-				{
-					//サウンド再生
-					//PlaySound(m_pBlockDestroySE);
-				}
 			}
-
+		
 //確認用にブロックの個数をMessageBox関数で表示する処理(使用しない場合は0に変更)
 #if 0
 			if (count > 0)
@@ -260,6 +253,11 @@ void Field::UpdateCheck()
 				MessageBox(NULL, text.str().c_str(), caption.str().c_str(), MB_OK);
 			}
 #endif
+			if (m_state == Field::DESTROY)
+			{
+				//サウンド再生
+				PlaySound(m_pBlockDestroySE);
+			}
 		}
 	}
 }

@@ -1,11 +1,14 @@
 #include "Game.h"
 #include "Block.h"
+#include "Sound/Sound.h"
 #include "Field.h"
+
 
 Field* g_pField;
 
 bool InitGame()
 {
+	InitSound();
 	g_pField = new Field;
 	return true;
 }
