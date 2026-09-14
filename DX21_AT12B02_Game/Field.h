@@ -35,6 +35,10 @@ private:
 	bool m_check[FIELD_ROW][FIELD_COLUMN];
 
 	bool m_isMoveRight;	//右に移動しているか
+
+	// 現在操作している2個のブロックの回転中心
+	// 生成時に下側のブロックを設定し、回転中は同じブロックを中心にする
+	Block* m_pivotBlock;
 public:
 	Field();
 	~Field();
@@ -72,7 +76,7 @@ private:
 
 	//同期処理
 	void syncBlock(int x, int y);
-	
+
 	//ブロックを回転させる
 	void RotateBlock(int direction);
 

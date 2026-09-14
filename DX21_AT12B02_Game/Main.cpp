@@ -4,6 +4,8 @@
 #include "SpriteDrawer.h"
 #include "Game.h"
 #include "Input/Keyboard.h"
+#include "SceneManager.h"
+#include "Sound/Sound.h"
 
 #pragma comment(lib, "winmm.lib")
 
@@ -61,9 +63,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// SpriteDrawerの初期化
 	InitSpriteDrawer(GetDevice(), GetContext(), SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	// Gameの初期化
-	if (!InitGame()) {
-		MessageBox(NULL, "Failed InitGame", "Error", MB_OK);
+	// シーンの初期化
+	if (!InitSceneManager()) {
+		MessageBox(NULL, "Failed InitScene", "Error", MB_OK);
 		return 0;
 	}
 
@@ -95,9 +97,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				UpdateKeyboard();
 
-				UpdateGame();
+				UpdateSceneManager();
 				BeginDraw();
-				DrawGame();
+				DrawSceneManager();
 				EndDraw();
 
 				oldTime = nowTime;
@@ -107,10 +109,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// 終了処理
 	timeEndPeriod(1);
-	UninitGame();
+	UninitSound();
+	UnInitSceneManager();
 	UninitSpriteDrawer();
 	UninitDirectX();
 	UnregisterClass(wcex.lpszClassName, hInstance);
+
 
 	return 0;
 }

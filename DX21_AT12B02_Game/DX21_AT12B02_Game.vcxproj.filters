@@ -22,6 +22,9 @@
     <Filter Include="Sound">
       <UniqueIdentifier>{14506382-599e-4fb0-939f-53f027d86484}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Title">
+      <UniqueIdentifier>{0c418bad-92bc-41bc-9366-887b27d8a600}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectX.cpp">
@@ -50,6 +53,15 @@
     </ClCompile>
     <ClCompile Include="Sound\Sound.cpp">
       <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Title\Title.cpp">
+      <Filter>Title</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Title\TitleButton.cpp">
+      <Filter>Title</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +97,15 @@
     </ClInclude>
     <ClInclude Include="Sound\Sound.h">
       <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Title\Title.h">
+      <Filter>Title</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Title\TitleButton.h">
+      <Filter>Title</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

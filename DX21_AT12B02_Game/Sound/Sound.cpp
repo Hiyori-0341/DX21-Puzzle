@@ -71,6 +71,12 @@ HRESULT InitSound(void)
 
 	// COMオブジェクト初期化
 	hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+
+	if (hr == RPC_E_CHANGED_MODE)
+	{
+		hr = S_OK;
+	}
+
 	if (FAILED(hr))
 	{
 		return hr;
@@ -111,6 +117,8 @@ void UninitSound(void)
 		g_pXAudio->Release();
 		g_pXAudio = NULL;
 	}
+
+	CoUninitialize();
 }
 
 /**

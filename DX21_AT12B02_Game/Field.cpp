@@ -14,6 +14,7 @@ Field::Field()
 	, m_state()
 	, m_check{}
 	, m_isMoveRight(false)
+	, m_pivotBlock(nullptr)
 {
 	m_offset.x = 0.5f * (FIELD_COLUMN - 1.0f) * BLOCK_WIDTH;
 	m_offset.y = 0.5f * (FIELD_ROW - 1.0f) * BLOCK_HEIGHT;
@@ -30,10 +31,11 @@ Field::Field()
 		{ { width, -height, 0.0f},  {1.0f, 0.0f} }, // 右下
 		{ { width,  height, 0.0f},  {1.0f, 1.0f} }  // 右上
 	};
-	m_pFrameBuf = CreateVertexBuffer(GetDevice(), vtx, 4);
+	m_pFrameBuf = CreateVertexBuffer(GetDevice(), vtx, _countof(vtx));
 
 	//テクスチャ読み込み
-	HRESULT hr = LoadTextureFromFile(GetDevice(), "Image/Field/Frame.png", &m_pFrameTex);
+	const char* texture = "Image/Field/Frame.png";
+	HRESULT hr = LoadTextureFromFile(GetDevice(), texture, &m_pFrameTex);
 	if (FAILED(hr))
 	{
 		MessageBox(NULL, "FIELD Texture failed.", "Error", MB_OK);
@@ -48,7 +50,7 @@ Field::Field()
 
 		}
 	}
-	
+
 	//サウンドデータの読み込み
 	m_pBlockDestroySE = LoadSound("Sound/selab_kyupi45.mp3");
 }
@@ -79,7 +81,7 @@ Field :: ~Field()
 void Field::Update()
 {
 	for (int y = 0; y < FIELD_ROW; ++y) {
-		for (int x = 0; x < FIELD_COLUMN; ++x) 
+		for (int x = 0; x < FIELD_COLUMN; ++x)
 		{
 			if (m_grid[y][x] != nullptr)
 			{
@@ -97,7 +99,7 @@ void Field::Update()
 	case Field::State::DESTROY:		   UpdateDestroy();		 break;
 	case Field::State::GAMEOVER:	   UpdateGameOver();	 break;
 	}
-	}
+}
 
 
 void Field::Draw()
@@ -108,11 +110,11 @@ void Field::Draw()
 	for (int y = 0; y < FIELD_ROW; ++y) {
 		for (int x = 0; x < FIELD_COLUMN; ++x) {
 			SetSpritePos(BLOCK_WIDTH * x + m_offset.x,
-						 BLOCK_HEIGHT * y  +  m_offset.y);
+				BLOCK_HEIGHT * y + m_offset.y);
 			DrawSprite(m_pFrameBuf);
 		}
 	}
-	
+
 	for (int y = 0; y < FIELD_ROW; ++y) {
 		for (int x = 0; x < FIELD_COLUMN; ++x) {
 			if (m_grid[y][x] != nullptr) {
@@ -146,6 +148,11 @@ void Field::UpdateCreate()
 	//ブロックを縦に２個生成（色数に合わせてランダム）
 	m_grid[y][x] = new Block(rand() % BLOCK_COLOR_NUM, this);
 	m_grid[y + 1][x] = new Block(rand() % BLOCK_COLOR_NUM, this);
+
+	// 下側のブロックを回転中心として固定する。
+	// 回転するたびに「下側のブロック」を探し直さないことで、
+	// 回転するたびに中心が入れ替わる問題を防ぐ。
+	m_pivotBlock = m_grid[y + 1][x];
 
 	// 生成したブロックの位置を、配列の添え字に該当する箇所へ移動 
 	Index index;
@@ -205,7 +212,7 @@ void Field::UpdateIdle()
 
 	if (isIdle)
 		m_state = Field::CHECK;
-	if(isIdle)
+	if (isIdle)
 		m_state = Field::CHECK;	//全てのブロックが待機状態ならチェックに切り替える
 }
 
@@ -241,8 +248,8 @@ void Field::UpdateCheck()
 				//ブロックを消したので削除待ちのステートに切り替える
 				m_state = Field::DESTROY;
 			}
-		
-//確認用にブロックの個数をMessageBox関数で表示する処理(使用しない場合は0に変更)
+
+			//確認用にブロックの個数をMessageBox関数で表示する処理(使用しない場合は0に変更)
 #if 0
 			if (count > 0)
 			{
@@ -273,15 +280,20 @@ void Field::UpdateDestroy()
 		for (int x = 0; x < FIELD_COLUMN; ++x)
 		{
 			//ブロックが無ければスキップ
-			if(m_grid[y][x] == nullptr)	continue;
+			if (m_grid[y][x] == nullptr)	continue;
 
 			//ブロックが削除ステートなら削除する
 			if (m_grid[y][x]->GetState() == Block::ERASE)
 			{
+				if (m_grid[y][x] == m_pivotBlock)
+				{
+					m_pivotBlock = nullptr;
+				}
+
 				delete m_grid[y][x];
 				m_grid[y][x] = nullptr;
 			}
-			else if(m_grid[y][x]->GetState() == Block::DESTROY)
+			else if (m_grid[y][x]->GetState() == Block::DESTROY)
 			{
 				isDestroy = true;
 			}
@@ -290,18 +302,18 @@ void Field::UpdateDestroy()
 
 	if (!isDestroy)
 	{
-	//一度すべてのブロックを待機から落下状態に変更する
-	for (int y = 0; y < FIELD_ROW; ++y)
-	{
-		for (int x = 0; x < FIELD_COLUMN; ++x)
+		//一度すべてのブロックを待機から落下状態に変更する
+		for (int y = 0; y < FIELD_ROW; ++y)
 		{
-			//ブロックが無ければスキップする
-			if (m_grid[y][x] == nullptr) continue;
+			for (int x = 0; x < FIELD_COLUMN; ++x)
+			{
+				//ブロックが無ければスキップする
+				if (m_grid[y][x] == nullptr) continue;
 
-			//ブロック状態に変更
-			m_grid[y][x]->SetState(Block::FALL);
+				//ブロック状態に変更
+				m_grid[y][x]->SetState(Block::FALL);
+			}
 		}
-	}
 
 		//削除アニメーションが終了しているので、落下待機状態に切り替える
 		m_state = Field::IDLE;
@@ -442,7 +454,7 @@ void Field::RecursiveBlockDestroy(Index index)
 		//インデックスがフィールド内か判定
 		if (aroundIndex[i].x < 0)				continue;
 		if (aroundIndex[i].x >= FIELD_COLUMN)	continue;
-		if (aroundIndex[i].x < 0)				continue;
+		if (aroundIndex[i].y < 0)				continue;
 		if (aroundIndex[i].y >= FIELD_ROW)		continue;
 
 		//周辺のブロックを取得
@@ -509,55 +521,185 @@ void Field::syncBlock(int x, int y)
 
 void Field::RotateBlock(int direction)
 {
-	bool rotated = false;
-	for (int y = 0; y < FIELD_ROW && !rotated; ++y)
+	//============================================================
+	// 現在操作中の2個のブロックを、固定した回転中心を使って回転する
+	//
+	// フィールド座標：
+	//   X : 右が +
+	//   Y : 下が +
+	//
+	// direction > 0 : 時計回り
+	// direction < 0 : 反時計回り
+	//
+	// 生成時に下側のブロックを m_pivotBlock に保存する。
+	// 以降の回転では、毎回「下にあるブロック」を中心にせず、
+	// 必ず同じブロックを中心にする。
+	//============================================================
+
+	if (m_pivotBlock == nullptr)
+		return;
+
+	if (m_pivotBlock->GetState() != Block::MOVE)
+		return;
+
+
+	//============================================================
+	// 落下によって配列上の位置が変わっていても、
+	// m_grid から回転中心の現在位置を探す
+	//============================================================
+
+	int pivotX = -1;
+	int pivotY = -1;
+
+	for (int y = 0; y < FIELD_ROW; ++y)
 	{
-		for (int x = 0; x < FIELD_COLUMN && !rotated; ++x)
+		for (int x = 0; x < FIELD_COLUMN; ++x)
 		{
-			Block* firstBlock = m_grid[y][x];
-			if (firstBlock == nullptr) continue;
-			if (firstBlock->GetState() != Block::MOVE) continue;
-
-			// 隣接方向を探索（上, 下, 左, 右）
-			Index aroundIndex[] = { {0,-1}, {0,1}, {-1,0}, {1,0} };
-
-			for (int i = 0; i < _countof(aroundIndex) && !rotated; ++i)
+			if (m_grid[y][x] == m_pivotBlock)
 			{
-				int nx = x + aroundIndex[i].x;
-				int ny = y + aroundIndex[i].y;
-				if (nx < 0 || nx >= FIELD_COLUMN || ny < 0 || ny >= FIELD_ROW) continue;
-
-				Block* secondBlock = m_grid[ny][nx];
-				if (secondBlock == nullptr) continue;
-				if (secondBlock->GetState() != Block::MOVE) continue;
-
-				// firstBlock をピボットにして secondBlock を回転させる
-				int dx = nx - x;
-				int dy = ny - y;
-				// 90度右回転 (x,y) -> (y, -x) （フィールドの y は下方向増加を想定）
-				int rdx =  dy * direction;
-				int rdy = -dx * direction;
-				int tx = x + rdx;
-				int ty = y + rdy;
-
-				// 回転先チェック
-				if (tx < 0 || tx >= FIELD_COLUMN || ty < 0 || ty >= FIELD_ROW) continue;
-				Block* target = m_grid[ty][tx];
-				// 回転先が別のブロックで塞がれていたら不可（自分(b)がいる位置は既に cleared するため OK）
-				if (target != nullptr && target != secondBlock) continue;
-
-				// 実際に移動（配列と見た目座標）
-				m_grid[ny][nx] = nullptr;
-				m_grid[ty][tx] = secondBlock;
-				Index idx; 
-				idx.x = tx; 
-				idx.y = ty;
-
-				float2 newPos = IndexToPos(idx);
-				secondBlock->SetPos(newPos);
-
-				rotated = true;
+				pivotX = x;
+				pivotY = y;
+				break;
 			}
 		}
+
+		if (pivotX != -1)
+			break;
 	}
+
+	if (pivotX == -1 || pivotY == -1)
+		return;
+
+
+	//============================================================
+	// 回転中心に隣接している、もう片方の MOVE ブロックを探す
+	//============================================================
+
+	const int dx[] = { 0, 0, -1, 1 };
+	const int dy[] = { -1, 1, 0, 0 };
+
+	Block* moverBlock = nullptr;
+
+	int moverX = -1;
+	int moverY = -1;
+
+	for (int i = 0; i < 4; ++i)
+	{
+		int x = pivotX + dx[i];
+		int y = pivotY + dy[i];
+
+		if (x < 0 || x >= FIELD_COLUMN ||
+			y < 0 || y >= FIELD_ROW)
+		{
+			continue;
+		}
+
+		if (m_grid[y][x] == nullptr)
+			continue;
+
+		if (m_grid[y][x]->GetState() != Block::MOVE)
+			continue;
+
+		moverBlock = m_grid[y][x];
+		moverX = x;
+		moverY = y;
+		break;
+	}
+
+	if (moverBlock == nullptr)
+		return;
+
+
+	//============================================================
+	// 回転前の回転中心からの相対座標
+	//============================================================
+
+	int relativeX = moverX - pivotX;
+	int relativeY = moverY - pivotY;
+
+	int rotatedX;
+	int rotatedY;
+
+
+	//============================================================
+	// 画面座標系での90度回転
+	//
+	// 上 ( 0,-1 ) を時計回りに回すと右 ( 1,0 )
+	//
+	// 時計回り：
+	//   (x,y) -> (-y,x)
+	//
+	// 反時計回り：
+	//   (x,y) -> (y,-x)
+	//============================================================
+
+	if (direction > 0)
+	{
+		// 時計回り
+		rotatedX = -relativeY;
+		rotatedY = relativeX;
+	}
+	else
+	{
+		// 反時計回り
+		rotatedX = relativeY;
+		rotatedY = -relativeX;
+	}
+
+
+	int targetX = pivotX + rotatedX;
+	int targetY = pivotY + rotatedY;
+
+
+	//============================================================
+	// 回転先がフィールド外なら回転しない
+	//============================================================
+
+	if (targetX < 0 || targetX >= FIELD_COLUMN ||
+		targetY < 0 || targetY >= FIELD_ROW)
+	{
+		return;
+	}
+
+
+	//============================================================
+	// 回転先に別のブロックがあれば回転しない
+	//============================================================
+
+	if (m_grid[targetY][targetX] != nullptr &&
+		m_grid[targetY][targetX] != moverBlock)
+	{
+		return;
+	}
+
+
+	//============================================================
+	// 配列を更新
+	//
+	// m_pivotBlock は絶対に移動させない。
+	// moverBlock だけを回転先へ移動する。
+	//============================================================
+
+	m_grid[moverY][moverX] = nullptr;
+	m_grid[targetY][targetX] = moverBlock;
+
+
+	//============================================================
+	// 表示位置をグリッドに合わせる
+	//============================================================
+
+	Index pivotIndex;
+	pivotIndex.x = pivotX;
+	pivotIndex.y = pivotY;
+
+	Index targetIndex;
+	targetIndex.x = targetX;
+	targetIndex.y = targetY;
+
+	// 回転中心はその場に固定
+	m_pivotBlock->SetPos(IndexToPos(pivotIndex));
+
+	// もう片方だけ回転後の位置へ移動
+	moverBlock->SetPos(IndexToPos(targetIndex));
 }
+

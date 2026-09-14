@@ -32,6 +32,7 @@ Block::Block(int color, Field *pField)
 		"Image/Block/Block_Red.png",
 		"Image/Block/Block_Green.png",
 		"Image/Block/Block_Blue.png",
+		"Image/Title/PushStart.png"
 	};
 	// 安全のためインデックス範囲チェック
 	int idx = m_color % BLOCK_COLOR_NUM;

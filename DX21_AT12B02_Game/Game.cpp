@@ -8,8 +8,7 @@ Field* g_pField;
 
 bool InitGame()
 {
-	InitSound();
-	g_pField = new Field;
+	g_pField = new Field();
 	return true;
 }
 void UninitGame()

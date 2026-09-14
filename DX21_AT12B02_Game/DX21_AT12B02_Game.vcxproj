@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -135,8 +135,11 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Input\Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Sound\Sound.cpp" />
     <ClCompile Include="SpriteDrawer.cpp" />
+    <ClCompile Include="Title\Title.cpp" />
+    <ClCompile Include="Title\TitleButton.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -148,8 +151,11 @@
     <ClInclude Include="Field.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Input\Keyboard.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Sound\Sound.h" />
     <ClInclude Include="SpriteDrawer.h" />
+    <ClInclude Include="Title\Title.h" />
+    <ClInclude Include="Title\TitleButton.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
