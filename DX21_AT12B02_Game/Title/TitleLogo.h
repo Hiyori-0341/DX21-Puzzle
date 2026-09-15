@@ -1,8 +1,8 @@
 #pragma once
 #include "../DirectX.h"
 
-constexpr float TITLE_LOGO_WIDTH = 400.0f;
-constexpr float TITLE_LOGO_HEIGHT = 100.0f;
+constexpr float TITLE_LOGO_WIDTH = 500.0f;
+constexpr float TITLE_LOGO_HEIGHT = 200.0f;
 
 class TitleLogo
 {

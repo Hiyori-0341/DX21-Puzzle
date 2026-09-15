@@ -25,31 +25,19 @@
     <Filter Include="Title">
       <UniqueIdentifier>{0c418bad-92bc-41bc-9366-887b27d8a600}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{b69aa0c1-9fad-48a8-8633-310fc8e03e77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{0f8548ee-8bd3-427a-8c60-9c8c35599576}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectX.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteDrawer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Block.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Input\Keyboard.cpp">
       <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Field.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Sound\Sound.cpp">
       <Filter>Sound</Filter>
@@ -57,35 +45,38 @@
     <ClCompile Include="Title\Title.cpp">
       <Filter>Title</Filter>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Title\TitleButton.cpp">
       <Filter>Title</Filter>
     </ClCompile>
     <ClCompile Include="Title\TitleLogo.cpp">
       <Filter>Title</Filter>
     </ClCompile>
+    <ClCompile Include="Fade.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteDrawer.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Field.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectX.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteDrawer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Defines.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Block.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Input\Keyboard.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -95,23 +86,44 @@
     <ClInclude Include="DirectXTex\TextureLoad.h">
       <Filter>DirectXTex</Filter>
     </ClInclude>
-    <ClInclude Include="Field.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Sound\Sound.h">
       <Filter>Sound</Filter>
     </ClInclude>
     <ClInclude Include="Title\Title.h">
       <Filter>Title</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Title\TitleButton.h">
       <Filter>Title</Filter>
     </ClInclude>
     <ClInclude Include="Title\TitleLogo.h">
       <Filter>Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Fade.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteDrawer.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Field.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

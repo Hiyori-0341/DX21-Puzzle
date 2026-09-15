@@ -8,11 +8,8 @@ TitleLogo* g_pTitleLogo;
 
 bool InitTitle()
 {
-	InitSound();
-
 	g_pTitleButton = new TitleButton();
 	g_pTitleLogo = new TitleLogo();
-
 	return true;
 }
 
@@ -48,3 +45,4 @@ bool ChangeTitle()
 {
 	return g_pTitleButton->GetState() == TitleButton::AFTER;
 }
+ 

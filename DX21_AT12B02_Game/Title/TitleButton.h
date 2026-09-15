@@ -2,8 +2,8 @@
 #include "../DirectX.h"
 
 //íËêî
-constexpr float TITLE_BUTTON_WIDTH = 200.0f;
-constexpr float TITLE_BUTTON_HEIGHT = 50.0f;
+constexpr float TITLE_BUTTON_WIDTH = 216.0f;
+constexpr float TITLE_BUTTON_HEIGHT = 36.0f;
 
 
 

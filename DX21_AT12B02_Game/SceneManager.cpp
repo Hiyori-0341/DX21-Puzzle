@@ -1,39 +1,60 @@
 #include "SceneManager.h"
 #include "Title/Title.h"
 #include "Game.h"
+#include "Fade.h"
 
 #include <windows.h>
 
-
+Fade* g_pFade;
 SceneState g_SceneState;
+SceneState g_NextSceneState;
 
 bool InitSceneManager()
 {
+	g_pFade = new Fade();
 	ChangeScene(SCENE_TITLE);
+
 
 	return true;
 }
 
 void UpdateSceneManager()
 {
+	g_pFade->Update();
+
 	//シーン切替
-	SceneState nextScene = SCENE_NONE;
-	switch (g_SceneState)
+	//フェードが終わったら切替を行う
+	if (g_pFade->IsFinish())
 	{
-	case SCENE_NONE:
-		break;
-	case SCENE_TITLE:
-		if (ChangeTitle())
-			nextScene = SCENE_GAME;
-		break;
-	case SCENE_GAME:
-		break;
-	default:
-		break;
-	}
-	if(nextScene != SCENE_NONE)
-	{
-		ChangeScene(nextScene);
+		//フェードアウトで終了していれば次のシーンへ
+		if (g_pFade->IsFadeOut())
+		{
+			ChangeScene(g_NextSceneState);
+
+			g_NextSceneState = SCENE_NONE;
+
+		}
+		else
+		{
+			switch (g_SceneState)
+			{
+			case SCENE_NONE:
+				break;
+			case SCENE_TITLE:
+				if (ChangeTitle())
+					g_NextSceneState = SCENE_GAME;
+				break;
+			case SCENE_GAME:
+				break;
+			default:
+				break;
+			}
+
+			if (g_NextSceneState != SCENE_NONE)
+			{
+				g_pFade->Start(2.0f, true);	//フェードアウト開始
+			}
+		}
 	}
 
 	switch (g_SceneState)
@@ -47,6 +68,8 @@ void UpdateSceneManager()
 			UpdateGame();
 			break;
 	}
+
+
 }
 
 void DrawSceneManager()
@@ -62,10 +85,19 @@ void DrawSceneManager()
 		DrawGame();
 		break;
 	}
+
+	g_pFade->Draw();
+
 }
 
 void UnInitSceneManager()
 {
+	if(g_pFade)
+	{
+		delete g_pFade;
+		g_pFade = nullptr;
+	}
+
 	switch (g_SceneState)
 	{
 	case SCENE_NONE:
@@ -83,6 +115,9 @@ void UnInitSceneManager()
 
 void ChangeScene(SceneState scene)
 {
+	//フェードインの開始
+	g_pFade->Start(2.0f, false);
+
 	switch (g_SceneState)
 	{
 	case SCENE_NONE:
@@ -117,6 +152,4 @@ void ChangeScene(SceneState scene)
 	{
 		MessageBox(NULL, "切替先シーンの初期化に失敗", "Error", MB_OK);
 	}
-
-
 }

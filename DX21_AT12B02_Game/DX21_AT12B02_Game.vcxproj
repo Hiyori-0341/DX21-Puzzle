@@ -131,6 +131,7 @@
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="DirectX.cpp" />
+    <ClCompile Include="Fade.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Input\Keyboard.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="DirectX.h" />
     <ClInclude Include="DirectXTex\DirectXTex.h" />
     <ClInclude Include="DirectXTex\TextureLoad.h" />
+    <ClInclude Include="Fade.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Input\Keyboard.h" />
