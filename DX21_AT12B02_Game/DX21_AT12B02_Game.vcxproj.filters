@@ -63,6 +63,9 @@
     <ClCompile Include="Title\TitleButton.cpp">
       <Filter>Title</Filter>
     </ClCompile>
+    <ClCompile Include="Title\TitleLogo.cpp">
+      <Filter>Title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectX.h">
@@ -105,6 +108,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Title\TitleButton.h">
+      <Filter>Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Title\TitleLogo.h">
       <Filter>Title</Filter>
     </ClInclude>
   </ItemGroup>

@@ -140,6 +140,7 @@
     <ClCompile Include="SpriteDrawer.cpp" />
     <ClCompile Include="Title\Title.cpp" />
     <ClCompile Include="Title\TitleButton.cpp" />
+    <ClCompile Include="Title\TitleLogo.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +157,7 @@
     <ClInclude Include="SpriteDrawer.h" />
     <ClInclude Include="Title\Title.h" />
     <ClInclude Include="Title\TitleButton.h" />
+    <ClInclude Include="Title\TitleLogo.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
