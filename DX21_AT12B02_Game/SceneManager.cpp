@@ -45,6 +45,8 @@ void UpdateSceneManager()
 					g_NextSceneState = SCENE_GAME;
 				break;
 			case SCENE_GAME:
+				if(ChangeGame())
+					g_NextSceneState = SCENE_TITLE;
 				break;
 			default:
 				break;

@@ -4,3 +4,5 @@ bool InitGame();
 void UninitGame();
 void UpdateGame();
 void DrawGame();
+
+bool ChangeGame();

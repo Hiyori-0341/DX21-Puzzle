@@ -52,7 +52,7 @@ Field::Field()
 	}
 
 	//サウンドデータの読み込み
-	m_pBlockDestroySE = LoadSound("Sound/selab_kyupi45.mp3");
+	m_pBlockDestroySE = LoadSound("Sound/SE/BlockErase.wav");
 }
 
 Field :: ~Field()
@@ -134,6 +134,136 @@ void Field::SetMoveRight(bool isMoveRight)
 	m_isMoveRight = isMoveRight;
 }
 
+void Field::HardDrop()
+{
+	// 下キーが押されたときに、ブロックを一気に落下させる処理
+	Block* moveBlock[2] = { nullptr, nullptr };
+
+	int blockX[2] = { -1, -1 };
+	int blockY[2] = { -1, -1 };
+
+	int blockCount = 0;
+
+
+	for(int y = 0; y < FIELD_ROW; ++y)
+	{
+		for(int x = 0; x < FIELD_COLUMN; ++x)
+		{
+			//ブロックが存在しなければ処理しない
+			if(m_grid[y][x] == nullptr)		continue;
+			//ブロックの状態が移動中でなければ処理しない
+			if (m_grid[y][x]->GetState() != Block::State::MOVE)		continue;
+			//ブロックの数が2個を超えたら処理しない
+			if (blockCount >= 2) break;
+
+			moveBlock[blockCount] = m_grid[y][x];
+			blockX[blockCount] = x;
+			blockY[blockCount] = y;
+
+			blockCount++;
+		}
+		if (blockCount >= 2) break;
+	}
+
+	//２個そろっていなければ何もしない
+	if (blockCount != 2)	return;
+
+
+	//何マス落下できるかを計算する
+	int dropDist = FIELD_ROW;
+
+	for(int i = 0;i < 2; ++i)
+	{
+		int x = blockX[i];
+		int y = blockY[i];
+		int dist = 0;
+		while (y + dist + 1 < FIELD_ROW)
+		{
+			int checkY = y + dist + 1;
+
+			//操作中の片方のブロックを無視する
+			if(m_grid[checkY][x] == moveBlock[0] || 
+				m_grid[checkY][x] == moveBlock[1])
+			{
+				dist++;
+				continue;
+			}
+
+			//他のブロックにぶつかった
+			if(m_grid[checkY][x] != nullptr)
+			{
+				break;
+			}
+			dist++;
+		}
+
+		//２個のうち最も落ちれない距離を採用する
+		if (dist < dropDist) dropDist = dist;
+	}
+
+	//グリッド上の位置を変更する
+	if (dropDist > 0)
+	{
+		//元の場所を空に
+		for(int i = 0; i < 2; ++i)
+		{
+			m_grid[blockY[i]][blockX[i]] = nullptr;
+		}
+
+		//新しい場所に移動する
+		for(int i = 0; i < 2; ++i)
+		{
+			int newY = blockY[i] + dropDist;
+			m_grid[newY][blockX[i]] = moveBlock[i];
+
+			//ブロックの座標を更新する
+			Index index;
+			index.x = blockX[i];
+			index.y = newY;
+
+			moveBlock[i]->SetPos(IndexToPos(index));
+
+			//落下速度をリセット
+			moveBlock[i]->ResetFallSpeed();
+
+			//落下終了
+			moveBlock[i]->SetState(Block::State::IDLE);
+		}
+	}
+	else
+	{
+		//既に落下できない場合
+		moveBlock[0]->SetState(Block::State::IDLE);
+		moveBlock[1]->SetState(Block::State::IDLE);
+
+		moveBlock[0]->ResetFallSpeed();
+		moveBlock[1]->ResetFallSpeed();
+	}
+
+	//落下後の状態をチェックする
+	for (int y = FIELD_ROW - 2; y >= 0; --y)
+	{
+		for (int x = 0; x < FIELD_COLUMN; ++x)
+		{
+			Block* pBlock = m_grid[y][x];
+
+			if (pBlock == nullptr)
+				continue;
+
+			// 操作中のブロックは除外
+			if (pBlock->GetState() == Block::MOVE)
+				continue;
+
+			// 下が空いているなら落下
+			if (m_grid[y + 1][x] == nullptr)
+			{
+				pBlock->SetState(Block::FALL);
+				pBlock->ResetFallSpeed();
+			}
+		}
+	}
+}
+
 
 void Field::UpdateCreate()
 {
@@ -144,6 +274,13 @@ void Field::UpdateCreate()
 	int x = FIELD_COLUMN / 2;
 	int y = 0;
 	int time = timeBeginPeriod(1);
+
+	//ブロックが生成される前に、すでにブロックが存在する場合はゲームオーバー
+	if (m_grid[y][x] != nullptr)
+	{
+		m_state = Field::State::GAMEOVER;
+		return;
+	}
 
 	//ブロックを縦に２個生成（色数に合わせてランダム）
 	m_grid[y][x] = new Block(rand() % BLOCK_COLOR_NUM, this);
@@ -211,8 +348,6 @@ void Field::UpdateIdle()
 	}
 
 	if (isIdle)
-		m_state = Field::CHECK;
-	if (isIdle)
 		m_state = Field::CHECK;	//全てのブロックが待機状態ならチェックに切り替える
 }
 
@@ -262,8 +397,9 @@ void Field::UpdateCheck()
 #endif
 			if (m_state == Field::DESTROY)
 			{
+				
 				//サウンド再生
-				PlaySound(m_pBlockDestroySE);
+				PlaySound(m_pBlockDestroySE, 0.005f);
 			}
 		}
 	}
@@ -703,3 +839,7 @@ void Field::RotateBlock(int direction)
 	moverBlock->SetPos(IndexToPos(targetIndex));
 }
 
+Field::State Field::GetState() const
+{
+	return m_state;
+}

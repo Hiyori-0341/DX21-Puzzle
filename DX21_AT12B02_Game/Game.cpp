@@ -1,16 +1,20 @@
 #include "Game.h"
+#include "GameStartUI.h"
 #include "Block.h"
 #include "Sound/Sound.h"
 #include "Field.h"
 
 
 Field* g_pField;
+GameStartUI* g_pGameStartUI;
 
 bool InitGame()
 {
+	g_pGameStartUI = new GameStartUI();
 	g_pField = new Field();
 	return true;
 }
+
 void UninitGame()
 {
 	if (g_pField)
@@ -18,15 +22,32 @@ void UninitGame()
 		delete g_pField;
 		g_pField = nullptr;
 	}
-
+	if(g_pGameStartUI)
+	{
+		delete g_pGameStartUI;
+		g_pGameStartUI = nullptr;
+	}
 }
 
 void UpdateGame()
 {
-	g_pField->Update();
+	if(!g_pGameStartUI->isFinish())
+	{
+		g_pGameStartUI->Update();
+	}
+	else
+	{
+		g_pField->Update();
+	}
 }
 
 void DrawGame()
 {
 	g_pField->Draw();
+	g_pGameStartUI->Draw();
+}
+
+bool ChangeGame()
+{
+	return g_pField->GetState() == Field::GAMEOVER;
 }

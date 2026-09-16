@@ -32,7 +32,7 @@ Block::Block(int color, Field *pField)
 		"Image/Block/Block_Red.png",
 		"Image/Block/Block_Green.png",
 		"Image/Block/Block_Blue.png",
-		"Image/Title/PushStart.png"
+		"Image/Block/Block_Yellow.png"
 	};
 	// 安全のためインデックス範囲チェック
 	int idx = m_color % BLOCK_COLOR_NUM;
@@ -99,6 +99,11 @@ void Block::Draw()
 	DrawSprite(m_pVtx);
 }
 
+void Block::ResetFallSpeed()
+{
+	m_move.y = 0.0f;
+}
+
 void Block::SetState(State state)
 {
 	m_state = state;
@@ -148,7 +153,10 @@ void Block::UpdateMove()
 	}
 	if (isKeyTrigger(VK_DOWN))
 	{
-		SetState(State::FALL);
+		if (m_pField)
+		{
+			m_pField->HardDrop();
+		}
 	}
 
 	//落下処理
@@ -165,6 +173,7 @@ void Block::UpdateFall()
 {
 	//重力によって移動速度が徐々に増加
 	m_move.y += 0.8f;
+
 	//増加した速度分だけ移動
 	m_pos.y += m_move.y;
 

@@ -41,6 +41,8 @@ public:
 	void Update();
 	void Draw();
 
+	void ResetFallSpeed();
+
 	void SetState(State state);
 	State GetState();
 

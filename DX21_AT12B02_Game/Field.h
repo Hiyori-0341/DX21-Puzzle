@@ -47,6 +47,8 @@ public:
 
 	bool IsMoveRight();
 	void SetMoveRight(bool isMoveRight);
+	void HardDrop();
+	State GetState() const;
 
 private:
 	// ステート別の更新処理 

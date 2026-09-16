@@ -75,6 +75,12 @@
     <ClCompile Include="Block.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Title\TitleBackGround.cpp">
+      <Filter>Title</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStartUI.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input\Keyboard.h">
@@ -124,6 +130,12 @@
     </ClInclude>
     <ClInclude Include="Block.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Title\TitleBackGround.h">
+      <Filter>Title</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStartUI.h">
+      <Filter>System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

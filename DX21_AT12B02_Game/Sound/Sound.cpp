@@ -121,6 +121,22 @@ void UninitSound(void)
 	CoUninitialize();
 }
 
+void SetVolume(IXAudio2SourceVoice* pSourceVoice, float volume)
+{
+	if (pSourceVoice != NULL)
+	{
+		pSourceVoice->SetVolume(volume);
+	}
+}
+
+void SetMasterVolume(float volume)
+{
+	if(g_pMasterVoice != NULL)
+	{
+		g_pMasterVoice->SetVolume(volume);
+	}
+}
+
 /**
  * @brief サウンド作成
  * @param[in] file 読み込むファイル
@@ -142,14 +158,12 @@ XAUDIO2_BUFFER* LoadSound(const char *file, bool loop)
 	// 拡張子ごとに読み込み処理実行
 	HRESULT hr = E_FAIL;
 	LPSTR ext = PathFindExtension(file);
-	if (ext != NULL) {
-		if (memcmp(ext, ".wav", 4) == 0) {
+	if (_stricmp(ext,".wav") == 0) {
 			hr = LoadWav(file, &data);
 		}
-		else if (memcmp(ext, ".mp3", 4) == 0) {
+		else if (_stricmp(ext, ".mp3") == 0) {
 			hr = LoadMP3(file, &data);
 		}
-	}
 	if (FAILED(hr)) {
 		return NULL;
 	}
@@ -178,7 +192,7 @@ XAUDIO2_BUFFER* LoadSound(const char *file, bool loop)
  * @brief サウンド再生
  * @param[in] pSound サウンドバッファ
  */
-IXAudio2SourceVoice* PlaySound(XAUDIO2_BUFFER* pSound)
+IXAudio2SourceVoice* PlaySound(XAUDIO2_BUFFER* pSound, float volume)
 {
 	HRESULT hr;
 	IXAudio2SourceVoice* pSource;
@@ -222,6 +236,9 @@ IXAudio2SourceVoice* PlaySound(XAUDIO2_BUFFER* pSound)
 		return NULL;
 	}
 	pSource->SubmitSourceBuffer(pSound);
+
+	//ボリューム設定
+	pSource->SetVolume(volume);
 
 	// 再生
 	pSource->Start();
@@ -269,8 +286,11 @@ HRESULT LoadWav(const char *file, SoundData *pData)
 
 	// フォーマット取得
 	DWORD formatSize = formatChunk.cksize;
-	DWORD size = mmioRead(hMmio, reinterpret_cast<HPSTR>(&pData->format), formatSize);
-	if (size != formatSize) {
+
+	ZeroMemory(&pData->format, sizeof(WAVEFORMATEX));
+	DWORD readSizeneed = (formatSize > sizeof(WAVEFORMATEX)) ? sizeof(WAVEFORMATEX) : formatSize;
+	DWORD size = mmioRead(hMmio, reinterpret_cast<HPSTR>(&pData->format), readSizeneed);
+	if (size != readSizeneed) {
 		mmioClose(hMmio, 0);
 		return E_FAIL;
 	}

@@ -22,10 +22,14 @@ InitSound関数をLoadTexture関数より後に呼び出すとエラー
 HRESULT InitSound(void);
 void UninitSound(void);
 
+void SetVolume(IXAudio2SourceVoice* pSourceVoice, float volume = 1.0f);
+void SetMasterVolume(float volume);
+
+
 // サウンドの読み込み
 XAUDIO2_BUFFER* LoadSound(const char *file, bool loop = false);
 // サウンドの再生
 #undef PlaySound
-IXAudio2SourceVoice* PlaySound(XAUDIO2_BUFFER* pSound);
+IXAudio2SourceVoice* PlaySound(XAUDIO2_BUFFER* pSound, float volume);
 
 #endif // __SOUND_H__
