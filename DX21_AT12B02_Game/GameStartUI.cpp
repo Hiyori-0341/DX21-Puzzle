@@ -29,7 +29,7 @@ GameStartUI::GameStartUI()
 		MessageBox(NULL, texture, "ゲームスタートUIテクスチャ読み込みに失敗", MB_OK);
 	}
 
-	m_pos.y = -(SCREEN_HEIGHT * 0.5f);
+	m_pos.y = -(SCREEN_HEIGHT * 0.5f + 50.0f);
 }
 
 GameStartUI::~GameStartUI()
@@ -66,7 +66,7 @@ void GameStartUI::Update()
 				isNext = true;
 			break;
 		case 3:
-			m_pos.y += (SCREEN_HEIGHT * 0.5f) / 30;
+			m_pos.y += (SCREEN_HEIGHT * 0.5f + 100) / 30;
 			if (m_animeFrame >= 30)
 				isNext = true;
 			break;

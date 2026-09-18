@@ -80,6 +80,8 @@ Field :: ~Field()
 
 void Field::Update()
 {
+	m_moveInputHandled = false;	//移動入力を処理していない状態にする
+
 	for (int y = 0; y < FIELD_ROW; ++y) {
 		for (int x = 0; x < FIELD_COLUMN; ++x)
 		{
@@ -122,6 +124,9 @@ void Field::Draw()
 			}
 		}
 	}
+
+	SetSpriteColor(1.0f, 1.0f, 1.0f, 1.0f);
+	SetSpriteScale(1.0f, 1.0f);
 }
 
 bool Field::IsMoveRight()
@@ -136,9 +141,14 @@ void Field::SetMoveRight(bool isMoveRight)
 
 void Field::HardDrop()
 {
+	if (m_moveInputHandled)
+		return;
+	m_moveInputHandled = true;
+
 	// 下キーが押されたときに、ブロックを一気に落下させる処理
 	Block* moveBlock[2] = { nullptr, nullptr };
 
+	// 操作中のブロックの座標を記録する配列
 	int blockX[2] = { -1, -1 };
 	int blockY[2] = { -1, -1 };
 
@@ -264,6 +274,131 @@ void Field::HardDrop()
 	}
 }
 
+void Field::SoftDrop()
+{
+	if(m_moveInputHandled)
+		return;	
+	m_moveInputHandled = true;
+
+	Block* moveBlock[2] = { nullptr, nullptr };
+
+	int blockX[2] = { -1, -1 };
+	int blockY[2] = { -1, -1 };
+
+	int blockCount = 0;
+
+	//==================================================
+	// 操作中のブロックを探す
+	//==================================================
+	for (int y = 0; y < FIELD_ROW; ++y)
+	{
+		for (int x = 0; x < FIELD_COLUMN; ++x)
+		{
+			if (m_grid[y][x] == nullptr)
+				continue;
+
+			if (m_grid[y][x]->GetState() != Block::State::MOVE)
+				continue;
+
+			moveBlock[blockCount] = m_grid[y][x];
+			blockX[blockCount] = x;
+			blockY[blockCount] = y;
+
+			blockCount++;
+
+			if (blockCount == 2)
+				break;
+		}
+
+		if (blockCount == 2)
+			break;
+	}
+
+	// 2個揃っていなければ終了
+	if (blockCount != 2)
+		return;
+
+
+	//==================================================
+	// まず「2個とも」下に移動できるか確認
+	//==================================================
+	bool canDrop = true;
+
+	for (int i = 0; i < 2; ++i)
+	{
+		int x = blockX[i];
+		int y = blockY[i];
+
+		// 一番下
+		if (y + 1 >= FIELD_ROW)
+		{
+			canDrop = false;
+			break;
+		}
+
+		// 下に別のブロックがある
+		Block* below = m_grid[y + 1][x];
+
+		if (below != nullptr)
+		{
+			// 下のブロックが操作中の2個ならOK
+			if (below != moveBlock[0] &&
+				below != moveBlock[1])
+			{
+				canDrop = false;
+				break;
+			}
+		}
+	}
+
+	//==================================================
+	// 落下できない
+	//==================================================
+	if (!canDrop)
+	{
+		for (int i = 0; i < 2; ++i)
+		{
+			moveBlock[i]->SetState(Block::State::IDLE);
+			moveBlock[i]->ResetFallSpeed();
+		}
+
+		return;
+	}
+
+
+	//==================================================
+	// 元の位置をすべて空にする
+	//==================================================
+	for (int i = 0; i < 2; ++i)
+	{
+		m_grid[blockY[i]][blockX[i]] = nullptr;
+	}
+
+
+	//==================================================
+	// 2個とも1段下げる
+	//==================================================
+	for (int i = 0; i < 2; ++i)
+	{
+		int newX = blockX[i];
+		int newY = blockY[i] + 1;
+
+		m_grid[newY][newX] = moveBlock[i];
+
+		// 座標を更新
+		Index index;
+		index.x = newX;
+		index.y = newY;
+
+		moveBlock[i]->SetPos(IndexToPos(index));
+
+		// 落下速度をリセット
+		moveBlock[i]->ResetFallSpeed();
+
+		// 落下状態
+		moveBlock[i]->SetState(Block::State::MOVE);
+	}
+}
 
 void Field::UpdateCreate()
 {

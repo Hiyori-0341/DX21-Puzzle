@@ -151,11 +151,18 @@ void Block::UpdateMove()
 		m_pos.x += BLOCK_WIDTH;
 		if (m_pField) m_pField->SetMoveRight(true);
 	}
-	if (isKeyTrigger(VK_DOWN))
+	if (isKeyTrigger(VK_UP))
 	{
 		if (m_pField)
 		{
 			m_pField->HardDrop();
+		}
+	}
+	if (isKeyTrigger(VK_DOWN))
+	{
+		if(m_pField)
+		{
+			m_pField->SoftDrop();
 		}
 	}
 

@@ -36,6 +36,8 @@ private:
 
 	bool m_isMoveRight;	//右に移動しているか
 
+	bool m_moveInputHandled;	//移動入力を処理したかどうか
+
 	// 現在操作している2個のブロックの回転中心
 	// 生成時に下側のブロックを設定し、回転中は同じブロックを中心にする
 	Block* m_pivotBlock;
@@ -48,6 +50,7 @@ public:
 	bool IsMoveRight();
 	void SetMoveRight(bool isMoveRight);
 	void HardDrop();
+	void SoftDrop();
 	State GetState() const;
 
 private:
