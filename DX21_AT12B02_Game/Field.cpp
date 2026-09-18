@@ -139,6 +139,7 @@ void Field::SetMoveRight(bool isMoveRight)
 	m_isMoveRight = isMoveRight;
 }
 
+//
 void Field::HardDrop()
 {
 	if (m_moveInputHandled)
