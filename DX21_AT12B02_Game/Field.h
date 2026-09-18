@@ -99,6 +99,11 @@ private:
 
 	void UpdateFallBlock(int x, int y);
 
+	bool IsCellOccupied(int x, int y, Block* ignoreBlock1, Block* ignoreBlock2);
+
+	void RotateSpawnBlock(int direction);
+	// クランプしない座標→Index変換(生成中の画面外判定用)
+	Index PosToIndexRaw(float2 pos);
 private:
 	//サウンド
 	XAUDIO2_BUFFER* m_pBlockDestroySE;
