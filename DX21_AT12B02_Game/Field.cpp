@@ -81,13 +81,35 @@ Field :: ~Field()
 void Field::Update()
 {
 	m_moveInputHandled = false;	//移動入力を処理していない状態にする
+	m_horizontalInputHandled = false;	//左右移動入力を処理していない状態にする
 
-	for (int y = 0; y < FIELD_ROW; ++y) {
+	Block* updateList[FIELD_ROW * FIELD_COLUMN];
+	int updateCount = 0;
+
+	for(int y = 0; y < FIELD_ROW; ++y)
+	{
+		for(int x = 0; x < FIELD_COLUMN; ++x)
+		{
+			if(m_grid[y][x] != nullptr)
+			{
+				updateList[updateCount++] = m_grid[y][x];
+			}
+		}
+	}
+	
+	for(int i = 0; i < updateCount; ++i)
+	{
+		updateList[i]->Update();
+	}
+
+	for (int y = FIELD_ROW - 1; y >= 0; --y)
+	{
 		for (int x = 0; x < FIELD_COLUMN; ++x)
 		{
-			if (m_grid[y][x] != nullptr)
+			if (m_grid[y][x] != nullptr &&
+				m_grid[y][x]->GetState() == Block::FALL)
 			{
-				m_grid[y][x]->Update();
+				UpdateFallBlock(x, y);
 			}
 		}
 	}
@@ -399,6 +421,69 @@ void Field::SoftDrop()
 		// 落下状態
 		moveBlock[i]->SetState(Block::State::MOVE);
 	}
+}
+
+void Field::MoveHorizontal(int direction)
+{
+	if(m_horizontalInputHandled)	return;
+	m_horizontalInputHandled = true;
+
+	Block* moveBlock[2] = { nullptr, nullptr };
+	int BlockX[2] = { -1, -1 };
+	int BlockY[2] = { -1, -1 };
+	int BlockCount = 0;
+
+	// 操作中のブロックを探す
+	for(int y = 0; y < FIELD_ROW; ++y)
+	{
+		for(int x = 0; x < FIELD_COLUMN; ++x)
+		{
+			if(m_grid[y][x] == nullptr)	continue;
+			if(m_grid[y][x]->GetState() != Block::State::MOVE)	continue;
+			moveBlock[BlockCount] = m_grid[y][x];
+			BlockX[BlockCount] = x;
+			BlockY[BlockCount] = y;
+			BlockCount++;
+			if(BlockCount == 2)	break;
+		}
+		if(BlockCount == 2)	break;
+	}
+
+	int targetX[2];
+	bool canMove = true;
+
+	for (int i = 0; i < 2; i++)
+	{
+		targetX[i] = BlockX[i] + direction;
+		if (targetX[i] < 0 || targetX[i] >= FIELD_COLUMN)
+		{
+			canMove = false;
+			break;
+		}
+		Block* targetBlock = m_grid[BlockY[i]][targetX[i]];
+		if (targetBlock != nullptr && targetBlock != moveBlock[0] && targetBlock != moveBlock[1])
+		{
+			canMove = false;
+			break;
+		}
+	}
+	
+	if (!canMove)	return;
+
+	for (int i = 0; i < 2; i++)
+	{
+		m_grid[BlockY[i]][BlockX[i]] = nullptr;
+	}
+	for(int i = 0; i < 2; i++)
+	{
+		m_grid[BlockY[i]][targetX[i]] = moveBlock[i];
+		Index index;
+		index.x = targetX[i];
+		index.y = BlockY[i];
+		moveBlock[i]->SetPos(IndexToPos(index));
+	}
+
+	SetMoveRight(direction > 0);
 }
 
 void Field::UpdateCreate()
@@ -748,17 +833,10 @@ void Field::RecursiveBlockDestroy(Index index)
 void Field::syncBlock(int x, int y)
 {
 	if (!m_grid[y][x]) return;
+	if (m_grid[y][x]->GetState() != Block::MOVE) return;
 
 	float2 pos = m_grid[y][x]->GetPos();
 
-	if (m_offset.x > pos.x)
-	{
-		m_grid[y][x]->SetPos(m_offset.x, pos.y);
-	}
-	if (-m_offset.x < pos.x)
-	{
-		m_grid[y][x]->SetPos(-m_offset.x, pos.y);
-	}
 	if (-m_offset.y < pos.y)
 	{
 		m_grid[y][x]->SetPos(pos.x, -m_offset.y);
@@ -768,21 +846,13 @@ void Field::syncBlock(int x, int y)
 	pos = m_grid[y][x]->GetPos();
 	Index index = PosToIndex(pos);
 
-	if (m_grid[index.y][index.x] != nullptr)
+	if(m_grid[index.y][index.x] != nullptr &&
+		m_grid[index.y][index.x] != m_grid[y][x])
 	{
-		if (index.y != y)
-		{
-			index.y = y;
-			pos = IndexToPos(index);
-			m_grid[y][x]->SetPos(pos);
-			m_grid[y][x]->SetState(Block::IDLE);
-		}
-		else
-		{
-			index.x = x;
-			pos = IndexToPos(index);
-			m_grid[y][x]->SetPos(pos);
-		}
+		index.y = y;
+		pos = IndexToPos(index);
+		m_grid[y][x]->SetPos(pos.x, pos.y);
+		m_grid[y][x]->SetState(Block::IDLE);
 	}
 	else
 	{
@@ -973,6 +1043,44 @@ void Field::RotateBlock(int direction)
 
 	// もう片方だけ回転後の位置へ移動
 	moverBlock->SetPos(IndexToPos(targetIndex));
+}
+
+void Field::UpdateFallBlock(int x, int y)
+{
+	Block* pBlock = m_grid[y][x];
+	if (pBlock == nullptr) return;
+
+	float2 pos = pBlock->GetPos();
+
+	//現在のマスのグリッド座標(Y)
+	Index curIndex = { x, y };
+	float curY = IndexToPos(curIndex).y;
+
+	//最下段か、真下のマスが埋まっているか
+	bool isBottom = (y + 1 >= FIELD_ROW);
+	bool isBlocked = isBottom || (m_grid[y + 1][x] != nullptr);
+
+	if (isBlocked)
+	{
+		//これ以上落下できないので、現在のマスにきっちり揃えて着地させる
+		pBlock->SetPos(pos.x, curY);
+		pBlock->SetState(Block::IDLE);
+		pBlock->ResetFallSpeed();
+		return;
+	}
+
+	//下のマスが空いている場合、そこに到達したかチェック
+	Index belowIndex = { x, y + 1 };
+	float belowY = IndexToPos(belowIndex).y;
+
+	if (pos.y >= belowY)
+	{
+		//1マス分落下完了。行き過ぎた分は切り捨てて座標を揃え、
+		//配列参照を1つ下へ移す
+		pBlock->SetPos(pos.x, belowY);
+		m_grid[y + 1][x] = pBlock;
+		m_grid[y][x] = nullptr;
+	}
 }
 
 Field::State Field::GetState() const

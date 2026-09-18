@@ -143,13 +143,11 @@ void Block::UpdateMove()
 {
 	if (isKeyRepeat(VK_LEFT) || isKeyTrigger(VK_LEFT))
 	{
-		m_pos.x -= BLOCK_WIDTH;
-		if (m_pField) m_pField->SetMoveRight(false);
+		if (m_pField) m_pField->MoveHorizontal(-1);
 	}
 	if (isKeyRepeat(VK_RIGHT) || isKeyTrigger(VK_RIGHT))
 	{
-		m_pos.x += BLOCK_WIDTH;
-		if (m_pField) m_pField->SetMoveRight(true);
+		if (m_pField) m_pField->MoveHorizontal(1);
 	}
 	if (isKeyTrigger(VK_UP))
 	{

@@ -36,7 +36,8 @@ private:
 
 	bool m_isMoveRight;	//右に移動しているか
 
-	bool m_moveInputHandled;	//移動入力を処理したかどうか
+	bool m_moveInputHandled;		//移動入力を処理したかどうか
+	bool m_horizontalInputHandled;	//左右移動入力を処理したかどうか
 
 	// 現在操作している2個のブロックの回転中心
 	// 生成時に下側のブロックを設定し、回転中は同じブロックを中心にする
@@ -51,6 +52,7 @@ public:
 	void SetMoveRight(bool isMoveRight);
 	void HardDrop();
 	void SoftDrop();
+	void MoveHorizontal(int direction);
 	State GetState() const;
 
 private:
@@ -85,6 +87,7 @@ private:
 	//ブロックを回転させる
 	void RotateBlock(int direction);
 
+	void UpdateFallBlock(int x, int y);
 
 private:
 	//サウンド
