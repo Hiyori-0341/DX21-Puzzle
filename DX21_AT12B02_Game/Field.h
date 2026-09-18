@@ -12,6 +12,7 @@ public:
 	enum State
 	{
 		CREATE,		   //ブロックを生成
+		SPAWN,		   //ブロックを生成中
 		IDLE,		   //落下待機
 		CHECK,		   //ブロックが４つ並んでいるか
 		DESTROY,	   //ブロックの削除
@@ -42,6 +43,14 @@ private:
 	// 現在操作している2個のブロックの回転中心
 	// 生成時に下側のブロックを設定し、回転中は同じブロックを中心にする
 	Block* m_pivotBlock;
+	Block* m_spawnBlock[2];	// 生成時に上側のブロックを保持する
+	bool m_isSpawning;		// ブロック生成中かどうかのフラグ
+
+	int m_fallTimer;	// 操作中ブロックの自動落下タイマー
+
+	bool m_rotateFailed;	// 回転が失敗したかどうかのフラグ
+
+	int m_rotateFailedDirection;	// 回転が失敗した場合の方向（1:右回転、-1:左回転）
 public:
 	Field();
 	~Field();
@@ -62,6 +71,7 @@ private:
 	void UpdateCheck();
 	void UpdateDestroy();
 	void UpdateGameOver();
+	void UpdateSpawn();
 
 	//二次元配列の添え字を示す構造体
 	struct Index

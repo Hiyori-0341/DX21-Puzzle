@@ -6,13 +6,13 @@
 
 
 
-Block::Block(int color, Field *pField)
+Block::Block(int color, Field* pField)
 	: m_pVtx(nullptr), m_pTexture(nullptr)
 	, m_state(Block::State::MOVE)
 	, m_color(color)
 	, m_pos{ 0.0f,0.0f }
 	, m_moveTimer(0)
-	, m_move{0.0f,0.0f}
+	, m_move{ 0.0f,0.0f }
 	, m_pField(pField)
 	, m_destroyTimer(0)
 {
@@ -44,7 +44,7 @@ Block::Block(int color, Field *pField)
 
 Block::~Block()
 {
-	if(m_pTexture)
+	if (m_pTexture)
 	{
 		m_pTexture->Release();
 		m_pTexture = nullptr;
@@ -109,7 +109,7 @@ void Block::SetState(State state)
 	m_state = state;
 }
 
-Block :: State Block::GetState()
+Block::State Block::GetState()
 {
 	return m_state;
 }
@@ -145,32 +145,20 @@ void Block::UpdateMove()
 	{
 		if (m_pField) m_pField->MoveHorizontal(-1);
 	}
+
 	if (isKeyRepeat(VK_RIGHT) || isKeyTrigger(VK_RIGHT))
 	{
 		if (m_pField) m_pField->MoveHorizontal(1);
 	}
+
 	if (isKeyTrigger(VK_UP))
 	{
-		if (m_pField)
-		{
-			m_pField->HardDrop();
-		}
+		if (m_pField) m_pField->HardDrop();
 	}
+
 	if (isKeyTrigger(VK_DOWN))
 	{
-		if(m_pField)
-		{
-			m_pField->SoftDrop();
-		}
-	}
-
-	//落下処理
-	m_moveTimer++;
-
-	if (m_moveTimer > BLOCK_MOVE_WAIT_TIME)
-	{
-		m_pos.y += BLOCK_HEIGHT;
-		m_moveTimer = 0;
+		if (m_pField) m_pField->SoftDrop();
 	}
 }
 
@@ -190,7 +178,7 @@ void Block::UpdateDestroy()
 	++m_destroyTimer;
 
 	//アニメーションが終了したら状態をERASEに変更
-	if(m_destroyTimer > BLOCK_DESTROY_TOTAL_FRAME)
+	if (m_destroyTimer > BLOCK_DESTROY_TOTAL_FRAME)
 	{
 		m_state = State::ERASE;
 	}
