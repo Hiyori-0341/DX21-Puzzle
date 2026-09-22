@@ -192,7 +192,7 @@ void Field::UpdateCreate()
 
 	for (int i = 0; i < PAIR_NUM; ++i)
 	{
-		m_pairBlock[i] = new Block(rand() % BLOCK_COLOR_NUM);
+		m_pairBlock[i] = new Block(m_colorGen.Next());
 	}
 
 	//軸はフィールド最上段(row0)、もう一方はその1マス上(row-1)から開始

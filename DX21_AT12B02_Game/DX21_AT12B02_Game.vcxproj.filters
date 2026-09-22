@@ -90,6 +90,9 @@
     <ClCompile Include="Chain.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="ColorGenerator.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input\Keyboard.h">
@@ -154,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="Chain.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorGenerator.h">
+      <Filter>System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

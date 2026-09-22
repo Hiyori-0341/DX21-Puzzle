@@ -5,6 +5,7 @@
 #include "DirectX.h"
 #include "SpriteDrawer.h"
 #include "Sound/Sound.h"
+#include "ColorGenerator.h"
 
 class Chain;
 
@@ -89,6 +90,9 @@ private:
 	float2 IndexToPos(Index index) const;
 
 private:
+	//ブロック生成アルゴリズム
+	ColorGenerator m_colorGen;
+
 	//連鎖数の表示
 	Chain* m_pChain;
 
