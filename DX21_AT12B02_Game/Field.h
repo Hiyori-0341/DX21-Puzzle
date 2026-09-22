@@ -1,3 +1,4 @@
+ï»¿
 #pragma once
 #include "Block.h"
 #include "Defines.h"
@@ -5,106 +6,104 @@
 #include "SpriteDrawer.h"
 #include "Sound/Sound.h"
 
+//============================================================
+// Field
+//
+// ç›¤é¢(m_grid)ã®ç®¡ç†ã€æ“ä½œä¸­ã®2å€‹çµ„ãƒ–ãƒ­ãƒƒã‚¯ã®ç§»å‹•ãƒ»å›è»¢ãƒ»è½ä¸‹ã€
+// æ¶ˆå»åˆ¤å®šã‚’æ‹…å½“ã™ã‚‹ã€‚
+//
+// æ“ä½œä¸­ã®2å€‹çµ„(ãƒšã‚¢)ã¯ã€ç€åœ°ã™ã‚‹ã¾ã§ç›¤é¢(m_grid)ã«ã¯å…¥ã‚Œãšã€
+// m_pairBlock / m_pairIndex ã§ç®¡ç†ã™ã‚‹ã€‚
+// ç”Ÿæˆç›´å¾Œã¯ä¸Šå´ã®ãƒ–ãƒ­ãƒƒã‚¯ãŒç›¤é¢ã®1ãƒã‚¹ä¸Š(y = -1)ã«ã„ã‚‹ã€‚
+//============================================================
 class Field
 {
 public:
-	//ˆ—‚Ìó‘Ô‚Ì’è‹`
+	//å‡¦ç†ã®çŠ¶æ…‹ã®å®šç¾©
 	enum State
 	{
-		CREATE,		   //ƒuƒƒbƒN‚ğ¶¬
-		SPAWN,		   //ƒuƒƒbƒN‚ğ¶¬’†
-		IDLE,		   //—‰º‘Ò‹@
-		CHECK,		   //ƒuƒƒbƒN‚ª‚S‚Â•À‚ñ‚Å‚¢‚é‚©
-		DESTROY,	   //ƒuƒƒbƒN‚Ìíœ
-		GAMEOVER	   //ƒQ[ƒ€ƒI[ƒo[
+		CREATE,		//ãƒ–ãƒ­ãƒƒã‚¯ã‚’ç”Ÿæˆ
+		IDLE,		//æ“ä½œãƒ»è½ä¸‹å¾…æ©Ÿ
+		CHECK,		//ãƒ–ãƒ­ãƒƒã‚¯ãŒ4ã¤ä»¥ä¸Šä¸¦ã‚“ã§ã„ã‚‹ã‹
+		DESTROY,	//ãƒ–ãƒ­ãƒƒã‚¯ã®å‰Šé™¤
+		GAMEOVER	//ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼
 	};
-private:
-	//”wŒiƒtƒŒ[ƒ€‚Ìî•ñ
-	ID3D11Buffer* m_pFrameBuf;					  //’¸“_ƒoƒbƒtƒ@
-	ID3D11ShaderResourceView* m_pFrameTex;		  //ƒeƒNƒXƒ`ƒƒ
 
-	//ƒtƒB[ƒ‹ƒh‚É”z’u‚³‚ê‚Ä‚¢‚éƒuƒƒbƒN‚Ìî•ñ
-	Block* m_grid[FIELD_ROW][FIELD_COLUMN];
-
-	//ƒtƒB[ƒ‹ƒh‚ğ‹æØ‚é˜g
-	float2 m_offset;	//˜g‚Ì•\¦ˆÊ’u
-
-	//Œ»İ‚Ìó‘Ô‚ğ’è‹`
-	State m_state;
-
-	//Ä‹Nˆ—‚ÌŠm”FÏ‚İƒtƒ‰ƒO
-	bool m_check[FIELD_ROW][FIELD_COLUMN];
-
-	bool m_isMoveRight;	//‰E‚ÉˆÚ“®‚µ‚Ä‚¢‚é‚©
-
-	bool m_moveInputHandled;		//ˆÚ“®“ü—Í‚ğˆ—‚µ‚½‚©‚Ç‚¤‚©
-	bool m_horizontalInputHandled;	//¶‰EˆÚ“®“ü—Í‚ğˆ—‚µ‚½‚©‚Ç‚¤‚©
-
-	// Œ»İ‘€ì‚µ‚Ä‚¢‚é2ŒÂ‚ÌƒuƒƒbƒN‚Ì‰ñ“]’†S
-	// ¶¬‚É‰º‘¤‚ÌƒuƒƒbƒN‚ğİ’è‚µA‰ñ“]’†‚Í“¯‚¶ƒuƒƒbƒN‚ğ’†S‚É‚·‚é
-	Block* m_pivotBlock;
-	Block* m_spawnBlock[2];	// ¶¬‚Éã‘¤‚ÌƒuƒƒbƒN‚ğ•Û‚·‚é
-	bool m_isSpawning;		// ƒuƒƒbƒN¶¬’†‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
-
-	int m_fallTimer;	// ‘€ì’†ƒuƒƒbƒN‚Ì©“®—‰ºƒ^ƒCƒ}[
-
-	bool m_rotateFailed;	// ‰ñ“]‚ª¸”s‚µ‚½‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
-
-	int m_rotateFailedDirection;	// ‰ñ“]‚ª¸”s‚µ‚½ê‡‚Ì•ûŒüi1:‰E‰ñ“]A-1:¶‰ñ“]j
 public:
 	Field();
 	~Field();
+
 	void Update();
 	void Draw();
 
-	bool IsMoveRight();
-	void SetMoveRight(bool isMoveRight);
-	void HardDrop();
-	void SoftDrop();
-	void MoveHorizontal(int direction);
 	State GetState() const;
 
 private:
-	// ƒXƒe[ƒg•Ê‚ÌXVˆ— 
-	void UpdateCreate();
-	void UpdateIdle();
-	void UpdateCheck();
-	void UpdateDestroy();
-	void UpdateGameOver();
-	void UpdateSpawn();
-
-	//“ñŸŒ³”z—ñ‚Ì“Y‚¦š‚ğ¦‚·\‘¢‘Ì
+	//äºŒæ¬¡å…ƒé…åˆ—ã®æ·»ãˆå­—ã‚’ç¤ºã™æ§‹é€ ä½“
 	struct Index
 	{
 		int x;
 		int y;
 	};
 
-	float2 IndexToPos(Index index);
+	//ãƒšã‚¢ã®è¦ç´ ç•ªå·
+	enum PairPart
+	{
+		PIVOT,		//å›è»¢ã®ä¸­å¿ƒ(ç”Ÿæˆæ™‚ã¯ä¸‹å´)
+		SUB,		//å›è»¢ã™ã‚‹å´(ç”Ÿæˆæ™‚ã¯ä¸Šå´)
+		PAIR_NUM
+	};
 
-	// ƒQ[ƒ€ã‚ÌÀ•W‚©‚ç”z—ñ‚Ì“Y‚¦š‚É•ÏŠ· 
-	Index PosToIndex(float2 pos);
-
-	//Ä‹Nˆ—‚Å“¯‚¶F‚ÌƒuƒƒbƒN‚ğ”‚¦‚é
-	int RecursiveBlockCount(Index index);
-
-	//Ä‹Nˆ—‚Å“¯‚¶ƒuƒƒbƒN‚ğíœ‚·‚é
-	void RecursiveBlockDestroy(Index index);
-
-	//“¯Šúˆ—
-	void syncBlock(int x, int y);
-
-	//ƒuƒƒbƒN‚ğ‰ñ“]‚³‚¹‚é
-	void RotateBlock(int direction);
-
-	void UpdateFallBlock(int x, int y);
-
-	bool IsCellOccupied(int x, int y, Block* ignoreBlock1, Block* ignoreBlock2);
-
-	void RotateSpawnBlock(int direction);
-	// ƒNƒ‰ƒ“ƒv‚µ‚È‚¢À•W¨Index•ÏŠ·(¶¬’†‚Ì‰æ–ÊŠO”»’è—p)
-	Index PosToIndexRaw(float2 pos);
 private:
-	//ƒTƒEƒ“ƒh
+	//ã‚¹ãƒ†ãƒ¼ãƒˆåˆ¥ã®æ›´æ–°å‡¦ç†
+	void UpdateCreate();
+	void UpdateIdle();
+	void UpdateCheck();
+	void UpdateDestroy();
+
+	//ç›¤é¢ä¸Šã®ãƒ–ãƒ­ãƒƒã‚¯ã®æ›´æ–°
+	void UpdateBlocks();
+	void UpdateFallBlock(int x, int y);
+	bool StartFalling();
+
+	//æ“ä½œä¸­ã®ãƒšã‚¢
+	bool HasPair() const;
+	void UpdatePair();
+	bool CanPlacePair(int dx, int dy) const;
+	void MovePair(int dx, int dy);
+	void RotatePair(int direction);
+	void HardDrop();
+	void StepDown();
+	void LockPair();
+	void ApplyPairPos();
+
+	//æ¶ˆå»åˆ¤å®š
+	int CollectSameColor(int startX, int startY,
+		bool visited[FIELD_ROW][FIELD_COLUMN], Index* pOut) const;
+
+	//ãƒã‚¹ç›®ã®åˆ¤å®šãƒ»åº§æ¨™å¤‰æ›
+	bool IsCellFree(int x, int y) const;
+	float2 IndexToPos(Index index) const;
+
+private:
+	//èƒŒæ™¯ãƒ•ãƒ¬ãƒ¼ãƒ ã®æƒ…å ±
+	ID3D11Buffer* m_pFrameBuf;	//é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡
+	ID3D11ShaderResourceView* m_pFrameTex;	//ãƒ†ã‚¯ã‚¹ãƒãƒ£
+	float2 m_offset;						//ãƒ•ãƒ¬ãƒ¼ãƒ ã®è¡¨ç¤ºä½ç½®
+
+	//ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã«é…ç½®ã•ã‚Œã¦ã„ã‚‹ãƒ–ãƒ­ãƒƒã‚¯
+	Block* m_grid[FIELD_ROW][FIELD_COLUMN];
+
+	//ç¾åœ¨ã®çŠ¶æ…‹
+	State m_state;
+
+	//æ“ä½œä¸­ã®ãƒšã‚¢(ç€åœ°ã™ã‚‹ã¾ã§m_gridã«ã¯å…¥ã‚Œãªã„)
+	Block* m_pairBlock[PAIR_NUM];
+	Index  m_pairIndex[PAIR_NUM];		//ãƒšã‚¢ã®ãƒã‚¹ç›®(ç”Ÿæˆç›´å¾Œã¯yãŒ-1ã«ãªã‚‹)
+	int    m_fallTimer;					//ãƒšã‚¢ã®è‡ªå‹•è½ä¸‹ã‚¿ã‚¤ãƒãƒ¼
+	int    m_quickTurnDirection;		//å›è»¢ã§ããªã‹ã£ãŸæ–¹å‘(1:å³å›è»¢ -1:å·¦å›è»¢ 0:ãªã—)
+
+	//ã‚µã‚¦ãƒ³ãƒ‰
 	XAUDIO2_BUFFER* m_pBlockDestroySE;
 };
+

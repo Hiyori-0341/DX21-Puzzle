@@ -3,67 +3,72 @@
 #include "DirectX.h"
 #include "SpriteDrawer.h"
 
-constexpr float BLOCK_WIDTH  = 40.0f;			 //ブロックの横幅
-constexpr float BLOCK_HEIGHT = 40.0f;			 //ブロックの縦幅
-constexpr   int BLOCK_MOVE_WAIT_TIME = 60;		 //ブロックの落下移動までの待ち時間
+constexpr float BLOCK_WIDTH = 40.0f;		//ブロックの横幅
+constexpr float BLOCK_HEIGHT = 40.0f;		//ブロックの縦幅
+constexpr   int BLOCK_MOVE_WAIT_TIME = 60;	//ブロックが1マス自動落下するまでの待ち時間(フレーム)
 
-class Field;
-
+//============================================================
+// Block
+//
+// ブロック1個分の「見た目」と「状態ごとの動き」だけを担当する。
+// 盤面上のどのマスにいるか、キー入力、当たり判定はFieldが担当する。
+//============================================================
 class Block
 {
 public:
 	//ブロックの状態を表す列挙子
 	enum State
 	{
-		IDLE,									 //待機中(ブロックが積まれている状態)
-		MOVE,									 //移動中(キー入力で左右移動)
-		FALL,									 //落下中(下キー入力と下のブロックが消えたとき)
-		DESTROY,								 //ブロックが消えるとき
-		ERASE,									 //ブロックが消えた後の処理
+		IDLE,		//待機中(ブロックが積まれている状態)
+		MOVE,		//操作中(Fieldが左右移動・回転を行う)
+		FALL,		//落下中(下のブロックが消えたとき)
+		DESTROY,	//消えるアニメーション中
+		ERASE,		//アニメーション終了(Fieldが削除する)
 	};
 
-private:
-	//表示に使用する変数
-	ID3D11Buffer*			  m_pVtx;			 //頂点バッファ
-	ID3D11ShaderResourceView* m_pTexture;		 //テクスチャ
-
-	//ブロックの処理に必要な変数				    
-	State  m_state;								 //現在のブロックの状態
-	int    m_color;								 //ブロックの色
-	float2 m_pos;								 //座標
-
-	Field* m_pField;					//ブロックが配置されているフィールドのポインタ
+public:
+	//全ブロックで共有する頂点バッファ・テクスチャの読み込み/解放
+	//(Fieldのコンストラクタ/デストラクタから呼ぶ。参照カウント式)
+	static void LoadResources();
+	static void ReleaseResources();
 
 public:
-	//基本の処理
-	Block(int color, Field *pField);
+	explicit Block(int color);
 	~Block();
+
 	void Update();
 	void Draw();
 
-	void ResetFallSpeed();
-
-	void SetState(State state);
-	State GetState();
-
-	void SetPos(float x, float y);
+	//座標
 	void SetPos(float2 pos);
-	float2 GetPos();
+	float2 GetPos() const;
 
-	//ブロックの色を取得
-	int GetColor();
+	//色
+	int  GetColor() const;
+	bool IsSameColor(const Block* pOther) const;
+
+	//状態
+	State GetState() const;
+	bool IsFalling() const;
+	bool IsDestroying() const;
+	bool IsErased() const;
+
+	void StartFall();			//落下を開始する(落下速度は0から)
+	void StartDestroy();		//消えるアニメーションを開始する
+	void Land(float2 pos);		//指定位置に置いて待機状態にする
+
+	//落下中の座標がyまで到達したか(Fieldがマスを1つ進めるかの判定に使う)
+	bool HasReachedY(float y) const;
 
 private:
 	//ステート別に実行する更新処理
-	void UpdateIdle();
-	void UpdateMove();
 	void UpdateFall();
 	void UpdateDestroy();
 
-	//移動に関係する処理
-	int m_moveTimer;	//落下までの時間
-	float2 m_move;		//移動スピード
-
-
-	int m_destroyTimer; //消えるアニメーション用のタイマー
+private:
+	State  m_state;			//現在のブロックの状態
+	int    m_color;			//ブロックの色
+	float2 m_pos;			//座標
+	float  m_fallSpeed;		//落下速度
+	int    m_destroyTimer;	//消えるアニメーション用のタイマー
 };
