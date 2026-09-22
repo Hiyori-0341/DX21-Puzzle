@@ -1,4 +1,5 @@
 ﻿#include "Field.h"
+#include "Chain.h"
 #include "VertexBuffer.h"
 #include "DirectXTex/TextureLoad.h"
 #include "Input/Keyboard.h"
@@ -22,6 +23,9 @@ Field::Field()
 	, m_quickTurnDirection(0)
 	, m_pBlockDestroySE(nullptr)
 {
+	//数字描画
+	m_pChain = new Chain();
+
 	//ブロックの共有リソース(頂点バッファ・テクスチャ)を読み込む
 	Block::LoadResources();
 
@@ -52,6 +56,12 @@ Field::Field()
 
 Field::~Field()
 {
+	if(m_pChain)
+	{
+		delete m_pChain;
+		m_pChain = nullptr;
+	}
+
 	for (int y = 0; y < FIELD_ROW; ++y)
 	{
 		for (int x = 0; x < FIELD_COLUMN; ++x)
@@ -90,6 +100,8 @@ Field::~Field()
 
 void Field::Update()
 {
+	m_pChain->Update();
+
 	//落下・消滅アニメーションの進行
 	if (m_state == Field::IDLE || m_state == Field::DESTROY)
 	{
@@ -143,6 +155,10 @@ void Field::Draw()
 		}
 	}
 
+	//連鎖数の表示
+	m_pChain->Draw();
+
+	//リセット
 	SetSpriteColor(1.0f, 1.0f, 1.0f, 1.0f);
 	SetSpriteScale(1.0f, 1.0f);
 }
@@ -150,6 +166,11 @@ void Field::Draw()
 Field::State Field::GetState() const
 {
 	return m_state;
+}
+
+int Field::GetChainCount() const
+{
+	return m_pChain->GetCount();
 }
 
 
@@ -208,6 +229,11 @@ void Field::UpdateCheck()
 	Index group[FIELD_ROW * FIELD_COLUMN];
 	bool isDestroy = false;
 
+	//消去されたブロックの座標の平均を求めるための変数
+	float sumX = 0.0f;
+	float sumY = 0.0f;
+	int totalErased = 0;
+
 	for (int y = 0; y < FIELD_ROW; ++y)
 	{
 		for (int x = 0; x < FIELD_COLUMN; ++x)
@@ -223,6 +249,11 @@ void Field::UpdateCheck()
 			for (int i = 0; i < count; ++i)
 			{
 				m_grid[group[i].y][group[i].x]->StartDestroy();
+
+				float2 pos = IndexToPos(group[i]);
+				sumX += pos.x;
+				sumY += pos.y;
+				++totalErased;
 			}
 			isDestroy = true;
 		}
@@ -230,6 +261,8 @@ void Field::UpdateCheck()
 
 	if (isDestroy)
 	{
+		//連鎖数を増やす
+		m_pChain->Add({ sumX / totalErased, sumY / totalErased });
 		PlaySound(m_pBlockDestroySE, 0.005f);
 		m_state = Field::DESTROY;
 	}
@@ -589,6 +622,9 @@ void Field::StepDown()
 //ペアを盤面(m_grid)へ移して操作を終える
 void Field::LockPair()
 {
+	//リセット
+	m_pChain->Reset();
+
 	//盤面の上にはみ出したまま止まった場合はゲームオーバー
 	for (int i = 0; i < PAIR_NUM; ++i)
 	{

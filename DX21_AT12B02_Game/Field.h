@@ -6,6 +6,8 @@
 #include "SpriteDrawer.h"
 #include "Sound/Sound.h"
 
+class Chain;
+
 //============================================================
 // Field
 //
@@ -37,6 +39,7 @@ public:
 	void Draw();
 
 	State GetState() const;
+	int GetChainCount() const;
 
 private:
 	//二次元配列の添え字を示す構造体
@@ -79,13 +82,16 @@ private:
 
 	//消去判定
 	int CollectSameColor(int startX, int startY,
-		bool visited[FIELD_ROW][FIELD_COLUMN], Index* pOut) const;
+	bool visited[FIELD_ROW][FIELD_COLUMN], Index* pOut) const;
 
 	//マス目の判定・座標変換
 	bool IsCellFree(int x, int y) const;
 	float2 IndexToPos(Index index) const;
 
 private:
+	//連鎖数の表示
+	Chain* m_pChain;
+
 	//背景フレームの情報
 	ID3D11Buffer* m_pFrameBuf;	//頂点バッファ
 	ID3D11ShaderResourceView* m_pFrameTex;	//テクスチャ

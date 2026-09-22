@@ -5,8 +5,20 @@
 #define SCREEN_HEIGHT	(540)
 #define FPS				(60)
 
-#define FIELD_COLUMN (6)
-#define FIELD_ROW (12)
+#define BLOCK_WIDTH		(40.0f)
+#define BLOCK_HEIGHT	(40.0f)
+
+#define DIGIT_WIDTH		(20.0f)
+#define DIGIT_HEIGHT	(30.0f)
+
+//「れんさ」ラベルのサイズ
+#define CHAIN_LABEL_WIDTH	(60.0f)
+#define CHAIN_LABEL_HEIGHT	(40.0f)
+#define CHAIN_FLASH_INTERVAL	(5)	//点滅間隔
+#define CHAIN_MOVE_SPEED		(1.5f)	//ブロックの移動速度
+
+#define FIELD_COLUMN	(6)
+#define FIELD_ROW		(12)
 
 #define BLOCK_COLOR_NUM (4)		//ブロックの色の種類
 #define BLOCK_ERACE_NUM (4)		//指定個数つながったらブロックを消す

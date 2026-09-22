@@ -84,6 +84,12 @@
     <ClCompile Include="BackGround.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Number.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="Chain.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input\Keyboard.h">
@@ -141,6 +147,12 @@
       <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="BackGround.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Number.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Chain.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
