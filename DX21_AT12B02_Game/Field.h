@@ -8,6 +8,8 @@
 #include "ColorGenerator.h"
 
 class Chain;
+class NextTsumo;
+class Frame;
 
 //============================================================
 // Field
@@ -96,10 +98,16 @@ private:
 	//連鎖数の表示
 	Chain* m_pChain;
 
+	//ツモ表示
+	NextTsumo* m_pNextTsumo;
+	int m_nextColor[PAIR_NUM];
+
 	//背景フレームの情報
 	ID3D11Buffer* m_pFrameBuf;	//頂点バッファ
 	ID3D11ShaderResourceView* m_pFrameTex;	//テクスチャ
 	float2 m_offset;						//フレームの表示位置
+
+	Frame* m_pFrame;	//フレーム描画用のラッパークラス
 
 	//フィールドに配置されているブロック
 	Block* m_grid[FIELD_ROW][FIELD_COLUMN];

@@ -93,6 +93,12 @@
     <ClCompile Include="ColorGenerator.cpp">
       <Filter>System</Filter>
     </ClCompile>
+    <ClCompile Include="NextTsumo.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Frame.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input\Keyboard.h">
@@ -160,6 +166,12 @@
     </ClInclude>
     <ClInclude Include="ColorGenerator.h">
       <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="NextTsumo.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

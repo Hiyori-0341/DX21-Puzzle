@@ -11,10 +11,10 @@ BackGround::BackGround()
 	float w = SCREEN_WIDTH * 0.5f;
 	float h = SCREEN_HEIGHT * 0.5f;
 	Vertex vtx[] = {
-		{ {-w, -h, 0.0f}, {0.0f, 1.0f} }, // 左下
-		{ {-w,  h, 0.0f}, {0.0f, 0.0f} }, // 左上
-		{ { w, -h, 0.0f}, {1.0f, 1.0f} }, // 右下
-		{ { w,  h, 0.0f}, {1.0f, 0.0f} }  // 右上
+		{ {-w,  h, 0.0f}, {0.0f, 1.0f} }, // 左下
+		{ {-w, -h, 0.0f}, {0.0f, 0.0f} }, // 左上
+		{ { w,  h, 0.0f}, {1.0f, 1.0f} }, // 右下
+		{ { w, -h, 0.0f}, {1.0f, 0.0f} }  // 右上
 	};
 	m_pBuffer = CreateVertexBuffer(GetDevice(), vtx, _countof(vtx));
 	//テクスチャの読み込み
@@ -42,7 +42,7 @@ BackGround::~BackGround()
 
 void BackGround::Update()
 {
-	//背景は特に更新することはない
+	
 }
 
 void BackGround::Draw()

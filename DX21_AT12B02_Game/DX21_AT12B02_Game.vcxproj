@@ -136,10 +136,12 @@
     <ClCompile Include="DirectX.cpp" />
     <ClCompile Include="Fade.cpp" />
     <ClCompile Include="Field.cpp" />
+    <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameStartUI.cpp" />
     <ClCompile Include="Input\Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="NextTsumo.cpp" />
     <ClCompile Include="Number.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Sound\Sound.cpp" />
@@ -161,9 +163,11 @@
     <ClInclude Include="DirectXTex\TextureLoad.h" />
     <ClInclude Include="Fade.h" />
     <ClInclude Include="Field.h" />
+    <ClInclude Include="Frame.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameStartUI.h" />
     <ClInclude Include="Input\Keyboard.h" />
+    <ClInclude Include="NextTsumo.h" />
     <ClInclude Include="Number.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Sound\Sound.h" />

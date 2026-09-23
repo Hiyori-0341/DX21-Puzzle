@@ -1,8 +1,11 @@
 ﻿#include "Field.h"
 #include "Chain.h"
+#include "Frame.h"
+#include "NextTsumo.h"
 #include "VertexBuffer.h"
 #include "DirectXTex/TextureLoad.h"
 #include "Input/Keyboard.h"
+#include <algorithm>
 #include <cstdlib>
 #include <utility>
 
@@ -23,8 +26,20 @@ Field::Field()
 	, m_quickTurnDirection(0)
 	, m_pBlockDestroySE(nullptr)
 {
+	//フレーム
+	float frameWidth = BLOCK_WIDTH * FIELD_COLUMN + 32.0f;
+	float frameHeight = BLOCK_HEIGHT * FIELD_ROW + 32.0f;
+	m_pFrame = new Frame("Image/UI/FieldFrame.png", frameWidth, frameHeight, { 0.0f, 0.0f });
 	//数字描画
 	m_pChain = new Chain();
+
+	//次のツモ表示
+	for(int i = 0; i < PAIR_NUM; ++i)
+	{
+		m_nextColor[i] = m_colorGen.Next();
+	}
+	m_pNextTsumo = new NextTsumo();
+	m_pNextTsumo->SetColor(m_nextColor[PIVOT], m_nextColor[SUB]);
 
 	//ブロックの共有リソース(頂点バッファ・テクスチャ)を読み込む
 	Block::LoadResources();
@@ -60,6 +75,12 @@ Field::~Field()
 	{
 		delete m_pChain;
 		m_pChain = nullptr;
+	}
+
+	if(m_pNextTsumo)
+	{
+		delete m_pNextTsumo;
+		m_pNextTsumo = nullptr;
 	}
 
 	for (int y = 0; y < FIELD_ROW; ++y)
@@ -158,6 +179,12 @@ void Field::Draw()
 	//連鎖数の表示
 	m_pChain->Draw();
 
+	//次のツモの表示
+	m_pNextTsumo->Draw();
+
+	//フィールド枠
+	m_pFrame->Draw();
+
 	//リセット
 	SetSpriteColor(1.0f, 1.0f, 1.0f, 1.0f);
 	SetSpriteScale(1.0f, 1.0f);
@@ -192,13 +219,20 @@ void Field::UpdateCreate()
 
 	for (int i = 0; i < PAIR_NUM; ++i)
 	{
-		m_pairBlock[i] = new Block(m_colorGen.Next());
+		m_pairBlock[i] = new Block(m_nextColor[i]);
 	}
 
 	//軸はフィールド最上段(row0)、もう一方はその1マス上(row-1)から開始
 	m_pairIndex[PIVOT] = { spawnX, 0 };
 	m_pairIndex[SUB] = { spawnX, -1 };
 	ApplyPairPos();
+
+	//次のツモを生成する
+	for (int i = 0; i < PAIR_NUM; ++i)
+	{
+		m_nextColor[i] = m_colorGen.Next();
+	}
+	m_pNextTsumo->SetColor(m_nextColor[PIVOT], m_nextColor[SUB]);
 
 	m_fallTimer = 0;
 	m_quickTurnDirection = 0;
@@ -263,12 +297,18 @@ void Field::UpdateCheck()
 	{
 		//連鎖数を増やす
 		m_pChain->Add({ sumX / totalErased, sumY / totalErased });
-		PlaySound(m_pBlockDestroySE, 0.005f);
-		m_state = Field::DESTROY;
-	}
-	else
-	{
-		m_state = Field::CREATE;
+		IXAudio2SourceVoice* pVoice = PlaySound(m_pBlockDestroySE, 0.6f);
+		if (pVoice)
+		{
+			float ratio = 1.0f + 0.15f * (m_pChain->GetCount());
+			pVoice->SetFrequencyRatio(std::min(ratio, 2.0f));
+
+			m_state = Field::DESTROY;
+		}
+		else
+		{
+			m_state = Field::CREATE;
+		}
 	}
 }
 

@@ -156,6 +156,11 @@ bool Block::IsSameColor(const Block* pOther) const
 	return pOther != nullptr && m_color == pOther->m_color;
 }
 
+void Block::SetColor(int color)
+{
+	m_color = color % BLOCK_COLOR_NUM;
+}
+
 
 //============================================================
 // èÛë‘

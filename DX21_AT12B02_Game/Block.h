@@ -3,8 +3,7 @@
 #include "DirectX.h"
 #include "SpriteDrawer.h"
 
-constexpr float BLOCK_WIDTH = 40.0f;		//ブロックの横幅
-constexpr float BLOCK_HEIGHT = 40.0f;		//ブロックの縦幅
+
 constexpr   int BLOCK_MOVE_WAIT_TIME = 60;	//ブロックが1マス自動落下するまでの待ち時間(フレーム)
 
 //============================================================
@@ -46,6 +45,7 @@ public:
 	//色
 	int  GetColor() const;
 	bool IsSameColor(const Block* pOther) const;
+	void SetColor(int color);
 
 	//状態
 	State GetState() const;
