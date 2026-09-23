@@ -1,4 +1,5 @@
-﻿#include "Field.h"
+﻿#define NOMINMAX
+#include "Field.h"
 #include "Chain.h"
 #include "Frame.h"
 #include "NextTsumo.h"
@@ -297,7 +298,7 @@ void Field::UpdateCheck()
 	{
 		//連鎖数を増やす
 		m_pChain->Add({ sumX / totalErased, sumY / totalErased });
-		IXAudio2SourceVoice* pVoice = PlaySound(m_pBlockDestroySE, 0.6f);
+		IXAudio2SourceVoice* pVoice = PlaySound(m_pBlockDestroySE, 0.3f);
 		if (pVoice)
 		{
 			float ratio = 1.0f + 0.15f * (m_pChain->GetCount());
@@ -305,10 +306,10 @@ void Field::UpdateCheck()
 
 			m_state = Field::DESTROY;
 		}
-		else
-		{
-			m_state = Field::CREATE;
-		}
+	}
+	else
+	{
+		m_state = Field::CREATE;
 	}
 }
 
