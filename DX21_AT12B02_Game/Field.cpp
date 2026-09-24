@@ -2,6 +2,7 @@
 #include "Field.h"
 #include "Chain.h"
 #include "Frame.h"
+#include "Score.h"
 #include "NextTsumo.h"
 #include "VertexBuffer.h"
 #include "DirectXTex/TextureLoad.h"
@@ -33,6 +34,8 @@ Field::Field()
 	m_pFrame = new Frame("Image/UI/FieldFrame.png", frameWidth, frameHeight, { 0.0f, 0.0f });
 	//数字描画
 	m_pChain = new Chain();
+	//スコア描画
+	m_pScore = new Score();
 
 	//次のツモ表示
 	for(int i = 0; i < PAIR_NUM; ++i)
@@ -84,6 +87,12 @@ Field::~Field()
 		m_pNextTsumo = nullptr;
 	}
 
+	if(m_pScore)
+	{
+		delete m_pScore;
+		m_pScore = nullptr;
+	}
+
 	for (int y = 0; y < FIELD_ROW; ++y)
 	{
 		for (int x = 0; x < FIELD_COLUMN; ++x)
@@ -123,6 +132,7 @@ Field::~Field()
 void Field::Update()
 {
 	m_pChain->Update();
+	m_pScore->Update();
 
 	//落下・消滅アニメーションの進行
 	if (m_state == Field::IDLE || m_state == Field::DESTROY)
@@ -186,6 +196,9 @@ void Field::Draw()
 	//フィールド枠
 	m_pFrame->Draw();
 
+	//スコアの表示
+	m_pScore->Draw();
+
 	//リセット
 	SetSpriteColor(1.0f, 1.0f, 1.0f, 1.0f);
 	SetSpriteScale(1.0f, 1.0f);
@@ -201,6 +214,10 @@ int Field::GetChainCount() const
 	return m_pChain->GetCount();
 }
 
+int Field::GetScore() const
+{
+	return m_pScore->GetScore();
+}
 
 //============================================================
 // ステート別の更新処理
@@ -298,6 +315,10 @@ void Field::UpdateCheck()
 	{
 		//連鎖数を増やす
 		m_pChain->Add({ sumX / totalErased, sumY / totalErased });
+
+		//スコアを加算する
+		m_pScore->Add(totalErased * 10 * m_pChain->GetCount());
+
 		IXAudio2SourceVoice* pVoice = PlaySound(m_pBlockDestroySE, 0.3f);
 		if (pVoice)
 		{

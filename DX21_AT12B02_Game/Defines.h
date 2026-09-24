@@ -11,12 +11,18 @@
 #define DIGIT_WIDTH		(20.0f)
 #define DIGIT_HEIGHT	(30.0f)
 
+// スコア表示
+#define SCORE_DIGIT_NUM	(6)	//スコア表示の桁数
+#define SCORE_POS_X  ( 50.0f)
+#define	SCORE_POS_Y  (250.0f)
+
 //「れんさ」ラベルのサイズ
 #define CHAIN_LABEL_WIDTH	(60.0f)
 #define CHAIN_LABEL_HEIGHT	(40.0f)
 #define CHAIN_FLASH_INTERVAL	(5)	//点滅間隔
 #define CHAIN_MOVE_SPEED		(1.5f)	//ブロックの移動速度
 
+// フィールドサイズ
 #define FIELD_COLUMN	(6)
 #define FIELD_ROW		(12)
 

@@ -99,6 +99,9 @@
     <ClCompile Include="Frame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Score.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input\Keyboard.h">
@@ -171,6 +174,9 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Frame.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Score.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>

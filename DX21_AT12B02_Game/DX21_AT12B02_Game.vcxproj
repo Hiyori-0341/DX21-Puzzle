@@ -144,6 +144,7 @@
     <ClCompile Include="NextTsumo.cpp" />
     <ClCompile Include="Number.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Score.cpp" />
     <ClCompile Include="Sound\Sound.cpp" />
     <ClCompile Include="SpriteDrawer.cpp" />
     <ClCompile Include="Title\Title.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="NextTsumo.h" />
     <ClInclude Include="Number.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Score.h" />
     <ClInclude Include="Sound\Sound.h" />
     <ClInclude Include="SpriteDrawer.h" />
     <ClInclude Include="Title\Title.h" />

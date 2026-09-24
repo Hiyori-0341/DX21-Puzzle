@@ -10,6 +10,7 @@
 class Chain;
 class NextTsumo;
 class Frame;
+class Score;
 
 //============================================================
 // Field
@@ -43,6 +44,7 @@ public:
 
 	State GetState() const;
 	int GetChainCount() const;
+	int GetScore() const;
 
 private:
 	//二次元配列の添え字を示す構造体
@@ -107,7 +109,11 @@ private:
 	ID3D11ShaderResourceView* m_pFrameTex;	//テクスチャ
 	float2 m_offset;						//フレームの表示位置
 
-	Frame* m_pFrame;	//フレーム描画用のラッパークラス
+	//フレーム描画
+	Frame* m_pFrame;
+
+	//スコア表示
+	Score* m_pScore;
 
 	//フィールドに配置されているブロック
 	Block* m_grid[FIELD_ROW][FIELD_COLUMN];
