@@ -37,4 +37,8 @@
 #define BLOCK_DESTROY_TOTAL_FRAME    (BLOCK_DESTROY_FLASH_FRAME + BLOCK_DESTROY_BOMB_FRAME)	//合計フレーム数
 #define BLOCK_DESTROY_BOMB_SCALE     (1.2f)	//爆発の拡大率
 
+//ブロックの着地時のつぶれ演出の設定
+#define SQUASH_OFFSET	(8.0f)	//つぶれの最大縮小率
+#define SQUASH_DECAY	(0.085)	//つぶれの1フレームあたりの減衰率
+
 constexpr float PI = 3.14159265f;

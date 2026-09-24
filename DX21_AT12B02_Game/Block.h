@@ -53,9 +53,11 @@ public:
 	bool IsDestroying() const;
 	bool IsErased() const;
 
-	void StartFall();			//落下を開始する(落下速度は0から)
-	void StartDestroy();		//消えるアニメーションを開始する
-	void Land(float2 pos);		//指定位置に置いて待機状態にする
+	void StartFall();					//落下を開始する(落下速度は0から)
+	void StartDestroy();				//消えるアニメーションを開始する
+	void Land(float2 pos);				//指定位置に置いて待機状態にする
+	void Squash(float intensity);		//着地の衝撃でつぶれる演出
+
 
 	//落下中の座標がyまで到達したか(Fieldがマスを1つ進めるかの判定に使う)
 	bool HasReachedY(float y) const;
@@ -71,4 +73,5 @@ private:
 	float2 m_pos;			//座標
 	float  m_fallSpeed;		//落下速度
 	int    m_destroyTimer;	//消えるアニメーション用のタイマー
+	float  m_squashIntensity;	//着地の衝撃でつぶれる演出の強さ
 };

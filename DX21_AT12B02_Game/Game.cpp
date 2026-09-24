@@ -46,7 +46,7 @@ void UpdateGame()
 	}
 	else
 	{
-		g_pBackGround->Update();
+		g_pBackGround->Update(g_pField->GetChainCount());
 		g_pField->Update();
 	}
 }

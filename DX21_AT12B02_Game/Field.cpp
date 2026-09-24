@@ -403,6 +403,7 @@ void Field::UpdateFallBlock(int x, int y)
 	if (y + 1 >= FIELD_ROW)
 	{
 		pBlock->Land(IndexToPos({ x, y }));
+		PropagateSquash(x, y);
 		return;
 	}
 
@@ -416,6 +417,7 @@ void Field::UpdateFallBlock(int x, int y)
 		if (!pBelow->IsFalling())
 		{
 			pBlock->Land(IndexToPos({ x, y }));
+			PropagateSquash(x, y);
 		}
 		return;
 	}
@@ -466,6 +468,23 @@ bool Field::StartFalling()
 	}
 
 	return hasFall;
+}
+
+void Field::PropagateSquash(int x, int startY)
+{
+	constexpr float INITIAL_INTENSITY = 1.0f;
+	constexpr float FALLOFF = 0.35f;	//1マス下がるごとに何割弱まるか
+
+	float intensity = INITIAL_INTENSITY;
+
+	for (int y = startY; y < FIELD_ROW && intensity > 0.05f; ++y)
+	{
+		if (m_grid[y][x] == nullptr)
+			break;	//隙間があれば、そこで途切れる(別の塊なので力は伝わらない)
+
+		m_grid[y][x]->Squash(intensity);
+		intensity *= (1.0f - FALLOFF);
+	}
 }
 
 //同じ色でつながっているブロックを幅優先で集め、個数を返す
@@ -704,6 +723,8 @@ void Field::LockPair()
 		m_pairBlock[i]->Land(IndexToPos(index));
 		m_grid[index.y][index.x] = m_pairBlock[i];
 		m_pairBlock[i] = nullptr;
+
+		PropagateSquash(index.x, index.y);
 	}
 
 	m_fallTimer = 0;

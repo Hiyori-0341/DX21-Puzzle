@@ -85,6 +85,7 @@ Block::Block(int color)
 	, m_pos{ 0.0f, 0.0f }
 	, m_fallSpeed(0.0f)
 	, m_destroyTimer(0)
+	, m_squashIntensity(0.0f)
 {
 }
 
@@ -99,6 +100,14 @@ void Block::Update()
 	case Block::FALL:		UpdateFall();		break;
 	case Block::DESTROY:	UpdateDestroy();	break;
 	default:									break;	//IDLE, MOVE, ERASEは何もしない
+	}
+
+	//着地の衝撃でつぶれる演出の更新
+	if(m_squashIntensity > 0.0f)
+	{
+		m_squashIntensity -= SQUASH_DECAY;
+		if (m_squashIntensity < 0.0f)
+			m_squashIntensity = 0.0f;
 	}
 }
 
@@ -123,10 +132,13 @@ void Block::Draw()
 	}
 	else
 	{
-		SetSpriteScale(1.0f, 1.0f);
+		SetSpriteScale(1.0f,1.0f);
 	}
 
 	SetSpritePos(m_pos.x, m_pos.y);
+	float2 drawPos = m_pos;
+	drawPos.y += m_squashIntensity * SQUASH_OFFSET;
+	SetSpritePos(drawPos.x, drawPos.y);
 	SetSpriteTexture(g_pTextures[m_color]);
 	DrawSprite(g_pVtx);
 }
@@ -203,6 +215,13 @@ void Block::Land(float2 pos)
 	m_pos = pos;
 	m_state = Block::IDLE;
 	m_fallSpeed = 0.0f;
+}
+
+void Block::Squash(float intensity)
+{
+	//着地の衝撃でつぶれる演出の強さを設定
+	if(intensity > m_squashIntensity)
+		m_squashIntensity = intensity;
 }
 
 bool Block::HasReachedY(float y) const

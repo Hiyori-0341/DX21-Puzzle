@@ -74,6 +74,9 @@ private:
 	void UpdateFallBlock(int x, int y);
 	bool StartFalling();
 
+	//着地の衝撃を列の下方向に伝播させる
+	void PropagateSquash(int x, int startY);
+
 	//操作中のペア
 	bool HasPair() const;
 	void UpdatePair();
