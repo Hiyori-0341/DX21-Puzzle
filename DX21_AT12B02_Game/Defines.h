@@ -41,4 +41,7 @@
 #define SQUASH_OFFSET	(8.0f)	//つぶれの最大縮小率
 #define SQUASH_DECAY	(0.085)	//つぶれの1フレームあたりの減衰率
 
+//ゴーストピース
+#define GHOST_ALPHA	(0.5f)	//ゴーストピースの透明度
+
 constexpr float PI = 3.14159265f;

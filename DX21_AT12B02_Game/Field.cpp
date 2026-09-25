@@ -178,6 +178,23 @@ void Field::Draw()
 		}
 	}
 
+	//落下予測(ゴースト)の描画
+	if(HasPair())
+	{
+		int dropDistance = GetGhostDropDistance();
+		
+		if (dropDistance > 0)
+		{
+			for (int i = 0; i < PAIR_NUM; ++i)
+			{
+				Index ghostIndex = m_pairIndex[i];
+				ghostIndex.y += dropDistance;
+
+				m_pairBlock[i]->DrawGhost(IndexToPos(ghostIndex));
+			}
+		}
+	}
+
 	//操作中のペア(生成直後は盤面の1マス上にいるため、m_gridとは別に描画する)
 	for (int i = 0; i < PAIR_NUM; ++i)
 	{
@@ -738,6 +755,16 @@ void Field::ApplyPairPos()
 	{
 		m_pairBlock[i]->SetPos(IndexToPos(m_pairIndex[i]));
 	}
+}
+
+int Field::GetGhostDropDistance() const
+{
+	int dy = 0;
+	while (CanPlacePair(0,dy + 1))
+	{
+		++dy;
+	}
+	return dy;
 }
 
 

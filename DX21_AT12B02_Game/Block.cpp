@@ -143,6 +143,16 @@ void Block::Draw()
 	DrawSprite(g_pVtx);
 }
 
+void Block::DrawGhost(float2 pos) const
+{
+	SetSpriteScale(1.0f, 1.0f);
+	SetSpritePos(pos.x, pos.y);
+	SetSpriteColor(1.0f, 1.0f, 1.0f, GHOST_ALPHA);
+	SetSpriteTexture(g_pTextures[m_color]);
+	DrawSprite(g_pVtx);
+	SetSpriteColor(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
 
 //============================================================
 // ç¿ïWÅEêF

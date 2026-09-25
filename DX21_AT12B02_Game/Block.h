@@ -37,6 +37,7 @@ public:
 
 	void Update();
 	void Draw();
+	void DrawGhost(float2 pos)const;
 
 	//ç¿ïW
 	void SetPos(float2 pos);

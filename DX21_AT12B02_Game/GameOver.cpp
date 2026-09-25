@@ -54,14 +54,14 @@ bool InitGameOver()
 	//”wŒi
 	w = SCREEN_WIDTH * 0.5f;
 	h = SCREEN_HEIGHT * 0.5f;
-	Vertex vtxPrompt[] = {
+	Vertex vtxBackGround[] = {
 	{ {-w, -h, 0.0f}, {0.0f, 0.0f} },
 	{ {-w,  h, 0.0f}, {0.0f, 1.0f} },
 	{ { w, -h, 0.0f}, {1.0f, 0.0f} },
 	{ { w,  h, 0.0f}, {1.0f, 1.0f} }
 	};
-	g_pBackGroundBuf = CreateVertexBuffer(GetDevice(), vtxPrompt, _countof(vtxPrompt));
-	LoadTextureFromFile(GetDevice(), "Image/GameOver/GameOverBackGround.png", &g_pBackGroundTex);
+	g_pBackGroundBuf = CreateVertexBuffer(GetDevice(), vtxBackGround, _countof(vtxPrompt));
+	LoadTextureFromFile(GetDevice(), "Image/Field/BackGround.png", &g_pBackGroundTex);
 
 
 	g_pNumber = new Number();
@@ -97,7 +97,9 @@ void UpdateGameOver()
 
 void DrawGameOver()
 {
+	SetSpritePos(0.0f, 0.0f);
 	SetSpriteScale(1.0f, 1.0f);
+	SetSpriteColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//”wŒi•\Ž¦
 	SetSpritePos(0.0f,0.0f);
@@ -116,8 +118,6 @@ void DrawGameOver()
 
 	//ÅIƒXƒRƒA(GetFinalScore‚ÍField”jŠüŒã‚àGame.cpp‘¤‚ÉŽc‚Á‚½’l‚ð•Ô‚·)
 	g_pNumber->Draw(GetFinalScore(), 50.0f, 0.0f, 24.0f, 32.0f, 6);
-
-
 }
 
 bool ChangeGameOver()

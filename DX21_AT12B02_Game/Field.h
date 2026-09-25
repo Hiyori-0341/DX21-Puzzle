@@ -88,6 +88,9 @@ private:
 	void LockPair();
 	void ApplyPairPos();
 
+	//落下先
+	int GetGhostDropDistance() const;
+
 	//消去判定
 	int CollectSameColor(int startX, int startY,
 	bool visited[FIELD_ROW][FIELD_COLUMN], Index* pOut) const;

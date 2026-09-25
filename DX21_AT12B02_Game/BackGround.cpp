@@ -17,9 +17,9 @@ namespace
 
 	constexpr LayerSetting LAYER_SETTINGS[] =
 	{
-		{ "Image/Field/BackGround.png",		0.0003f },	//一番奥:ゆっくり流れる空
-		{ "Image/Title/PushStart.",			0.0008f },	//中間:少し速く流れる雲
-		{ "Image/Title/PushStart.",			0.0f    },	//手前:静止した近景(スクロール速度0)
+		{ "Image/Field/BackGround.png",			 0.0003f },	//一番奥:ゆっくり流れる空
+		{ "Image/Field/BackGround_Star.png",	 0.0f },	//中間:少し速く流れる雲
+		{ "Image/Field/BackGround_Cloud.png",	-0.0008f},	//手前:静止した近景(スクロール速度0)
 	};
 }
 
