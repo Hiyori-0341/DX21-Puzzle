@@ -236,6 +236,11 @@ int Field::GetScore() const
 	return m_pScore->GetScore();
 }
 
+int Field::GetLevel() const
+{
+	return m_level;
+}
+
 //============================================================
 // ステート別の更新処理
 //============================================================
@@ -335,6 +340,9 @@ void Field::UpdateCheck()
 
 		//スコアを加算する
 		m_pScore->Add(totalErased * 10 * m_pChain->GetCount());
+
+		//消去したブロックの総数を加算する
+		AddErasedCount(totalErased);
 
 		IXAudio2SourceVoice* pVoice = PlaySound(m_pBlockDestroySE, 0.3f);
 		if (pVoice)
@@ -595,11 +603,12 @@ void Field::UpdatePair()
 	//一定時間ごとに1マス自動落下
 	++m_fallTimer;
 
-	if (m_fallTimer >= BLOCK_MOVE_WAIT_TIME)
+	if (m_fallTimer >= GetFallWaitTime())
 	{
 		m_fallTimer = 0;
 		StepDown();
 	}
+
 }
 
 //ペアを(dx, dy)だけ動かしたとき、2個とも置けるか
@@ -765,6 +774,22 @@ int Field::GetGhostDropDistance() const
 		++dy;
 	}
 	return dy;
+}
+
+void Field::AddErasedCount(int count)
+{
+	m_totalErased += count;
+
+	while(m_level < LEVEL_MAX && m_totalErased >= m_level * LEVEL_UP_ERASE_COUNT)
+	{
+		++m_level;
+	}
+}
+
+int Field::GetFallWaitTime() const
+{
+	int wait = FALL_WAIT_TIME_BASE - (m_level - 1) * FALL_WAIT_TIME_STEP;
+	return std::max(wait, FALL_WAIT_TIME_MIN);
 }
 
 

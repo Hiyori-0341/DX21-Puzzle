@@ -44,4 +44,12 @@
 //ゴーストピース
 #define GHOST_ALPHA	(0.5f)	//ゴーストピースの透明度
 
+//レベルシステム
+#define  LEVEL_UP_ERASE_COUNT (10)	//消したブロックの個数がこの値に達するとレベルアップする
+#define  LEVEL_MAX (99)	//最大レベル
+#define  FALL_WAIT_TIME_BASE (60)	//ブロックが落下するまでの待機時間の基本値(フレーム)
+#define  FALL_WAIT_TIME_MIN  (10)	//ブロックが落下するまでの待機時間の最小値(フレーム)
+#define  FALL_WAIT_TIME_STEP (2)	//ブロックが落下するまでの待機時間の減少量(フレーム)
+
+
 constexpr float PI = 3.14159265f;

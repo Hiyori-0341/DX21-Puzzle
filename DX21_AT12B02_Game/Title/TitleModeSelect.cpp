@@ -31,8 +31,8 @@ TitleModeSelect::TitleModeSelect()
 	m_pVtx = CreateVertexBuffer(GetDevice(), vtx, _countof(vtx));
 
 	const char* texturePaths[] = {
-		"Image/Title/MarathonButton.png",
-		"Image/Title/VersusButton.png"
+		"Image/Fade.png",
+		"Image/Fade.png"
 	};
 
 	for(int i = 0; i < _countof(texturePaths); ++i)
@@ -133,5 +133,5 @@ bool TitleModeSelect::IsDecided() const
 
 GameMode TitleModeSelect::GetSelectedMode() const
 {
-	return (m_cursorIndex == 0) ? MODE_MARATHON : MODE_MARATHON;
+	return (m_cursorIndex == 0) ? MODE_MARATHON : MODE_VERSUS;
 }

@@ -45,6 +45,7 @@ public:
 	State GetState() const;
 	int GetChainCount() const;
 	int GetScore() const;
+	int GetLevel() const;
 
 private:
 	//二次元配列の添え字を示す構造体
@@ -91,6 +92,10 @@ private:
 	//落下先
 	int GetGhostDropDistance() const;
 
+	//レベル・落下速度
+	void AddErasedCount(int count);
+	int GetFallWaitTime() const;
+
 	//消去判定
 	int CollectSameColor(int startX, int startY,
 	bool visited[FIELD_ROW][FIELD_COLUMN], Index* pOut) const;
@@ -132,6 +137,10 @@ private:
 	Index  m_pairIndex[PAIR_NUM];		//ペアのマス目(生成直後はyが-1になる)
 	int    m_fallTimer;					//ペアの自動落下タイマー
 	int    m_quickTurnDirection;		//回転できなかった方向(1:右回転 -1:左回転 0:なし)
+
+	//レベルシステム
+	int m_level;				//現在のレベル
+	int m_totalErased;          //消去したブロックの総数
 
 	//サウンド
 	XAUDIO2_BUFFER* m_pBlockDestroySE;

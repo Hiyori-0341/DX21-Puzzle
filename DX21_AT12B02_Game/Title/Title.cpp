@@ -9,6 +9,7 @@ TitleBackGround* g_pTitleBackGround;
 TitleButton* g_pTitleButton;
 TitleLogo* g_pTitleLogo;
 TitleModeSelect* g_pTitleModeSelect;
+GameMode g_selectMode = MODE_MARATHON;
 
 bool InitTitle()
 {
@@ -25,7 +26,7 @@ void DrawTitle()
 	g_pTitleButton->Draw();
 	g_pTitleLogo->Draw();
 
-	if (g_pTitleButton->GetState() != TitleButton::AFTER)
+	if (g_pTitleButton->GetState() == TitleButton::AFTER)
 	{
 		g_pTitleModeSelect->Draw();
 	}
@@ -55,6 +56,12 @@ void UpdateTitle()
 	else
 	{
 		g_pTitleModeSelect->Update();
+
+		//モードが決定したら選択されたモードを保存
+		if (g_pTitleModeSelect->IsDecided())
+		{
+			g_selectMode = g_pTitleModeSelect->GetSelectedMode();
+		}
 	}
 }
 
@@ -73,6 +80,6 @@ bool ChangeTitle()
 
 GameMode GetSelectMode()
 {
-	return g_pTitleModeSelect->GetSelectedMode();
+	return g_selectMode;
 }
  

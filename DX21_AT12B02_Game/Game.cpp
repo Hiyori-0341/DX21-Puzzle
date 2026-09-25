@@ -21,7 +21,16 @@ bool InitGame()
 
 	g_pGameStartUI = new GameStartUI();
 	g_pBackGround = new BackGround();
-	g_pField = new Field();
+	
+	if(mode == MODE_MARATHON)
+	{
+		g_pField = new Field();
+	}
+	else if(mode == MODE_VERSUS)
+	{
+		g_pField = new Field();
+	}
+
 	g_pGameOverLabel = new GameOverLabel();
 	g_isGameOverLabelStarted = false;
 	g_finalScore = 0;
