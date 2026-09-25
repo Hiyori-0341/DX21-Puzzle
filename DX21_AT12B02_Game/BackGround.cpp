@@ -60,24 +60,10 @@ BackGround::~BackGround()
 {
 	for (int i = 0; i < LAYER_NUM; ++i)
 	{
-		if (m_layers[i].pTexture)
-		{
-			m_layers[i].pTexture->Release();
-			m_layers[i].pTexture = nullptr;
-		}
+		if (m_layers[i].pTexture){ m_layers[i].pTexture->Release();	m_layers[i].pTexture = nullptr; }
 	}
-
-	if (m_pWhiteTexture)
-	{
-		m_pWhiteTexture->Release();
-		m_pWhiteTexture = nullptr;
-	}
-
-	if (m_pBuffer)
-	{
-		m_pBuffer->Release();
-		m_pBuffer = nullptr;
-	}
+	if (m_pWhiteTexture){	m_pWhiteTexture->Release();		m_pWhiteTexture = nullptr;}
+	if (m_pBuffer)	    {	m_pBuffer->Release();			m_pBuffer = nullptr;}
 }
 
 void BackGround::Update(int chainCount)

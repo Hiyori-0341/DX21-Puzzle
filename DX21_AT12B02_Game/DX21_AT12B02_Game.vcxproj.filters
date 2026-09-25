@@ -31,11 +31,11 @@
     <Filter Include="System">
       <UniqueIdentifier>{0f8548ee-8bd3-427a-8c60-9c8c35599576}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameOver">
+      <UniqueIdentifier>{8618d174-a9f2-4f31-84bd-bd5526dfc94b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Input\Keyboard.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -101,6 +101,15 @@
     </ClCompile>
     <ClCompile Include="Score.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOverLabel.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOver.cpp">
+      <Filter>GameOver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +187,12 @@
     </ClInclude>
     <ClInclude Include="Score.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOverLabel.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOver.h">
+      <Filter>GameOver</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

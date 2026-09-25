@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "Title/Title.h"
 #include "Game.h"
+#include "GameOver.h"
 #include "Fade.h"
 
 #include <windows.h>
@@ -46,7 +47,11 @@ void UpdateSceneManager()
 				break;
 			case SCENE_GAME:
 				if(ChangeGame())
-					g_NextSceneState = SCENE_TITLE;
+					g_NextSceneState = SCENE_GAMEOVER;
+				break;
+			case SCENE_GAMEOVER:
+				if (ChangeGameOver())
+					g_NextSceneState = WantsRetry() ? SCENE_GAME : SCENE_TITLE;
 				break;
 			default:
 				break;
@@ -69,6 +74,9 @@ void UpdateSceneManager()
 		case SCENE_GAME:
 			UpdateGame();
 			break;
+		case SCENE_GAMEOVER:
+			UpdateGameOver();
+			break;
 	}
 
 
@@ -85,6 +93,9 @@ void DrawSceneManager()
 		break;
 	case SCENE_GAME:
 		DrawGame();
+		break;
+	case SCENE_GAMEOVER:
+		DrawGameOver();
 		break;
 	}
 
@@ -110,6 +121,9 @@ void UnInitSceneManager()
 	case SCENE_GAME:
 		UninitGame();
 		break;
+	case SCENE_GAMEOVER:
+		UninitGameOver();
+		break;
 	default:
 		break;
 	}
@@ -130,6 +144,9 @@ void ChangeScene(SceneState scene)
 	case SCENE_GAME:
 		UninitGame();
 		break;
+	case SCENE_GAMEOVER:
+		UninitGameOver();
+		break;
 	default:
 		break;
 	}
@@ -146,6 +163,9 @@ void ChangeScene(SceneState scene)
 		break;
 	case SCENE_GAME:
 		InitGame();		result = true;
+		break;
+	case SCENE_GAMEOVER:
+		InitGameOver();	result = true;
 		break;
 	default:
 		break;

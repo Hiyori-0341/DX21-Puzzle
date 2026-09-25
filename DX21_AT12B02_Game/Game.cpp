@@ -4,17 +4,25 @@
 #include "Block.h"
 #include "Sound/Sound.h"
 #include "Field.h"
+#include "GameOverLabel.h"
 
 
 Field* g_pField;
 BackGround* g_pBackGround;
 GameStartUI* g_pGameStartUI;
+GameOverLabel* g_pGameOverLabel;
+bool g_isGameOverLabelStarted;
+int  g_finalScore;
 
 bool InitGame()
 {
 	g_pGameStartUI = new GameStartUI();
 	g_pBackGround = new BackGround();
 	g_pField = new Field();
+	g_pGameOverLabel = new GameOverLabel();
+	g_isGameOverLabelStarted = false;
+	g_finalScore = 0;
+
 	return true;
 }
 
@@ -35,6 +43,11 @@ void UninitGame()
 		delete g_pGameStartUI;
 		g_pGameStartUI = nullptr;
 	}
+	if(g_pGameOverLabel)
+	{
+		delete g_pGameOverLabel;
+		g_pGameOverLabel = nullptr;
+	}
 }
 
 void UpdateGame()
@@ -48,6 +61,17 @@ void UpdateGame()
 	{
 		g_pBackGround->Update(g_pField->GetChainCount());
 		g_pField->Update();
+
+		if(g_pField->GetState() == Field::GAMEOVER)
+		{
+			if (!g_isGameOverLabelStarted)
+			{
+				g_finalScore = g_pField->GetScore();
+				g_pGameOverLabel->Start();
+				g_isGameOverLabelStarted = true;
+			}
+			g_pGameOverLabel->Update();
+		}
 	}
 }
 
@@ -59,10 +83,18 @@ void DrawGame()
 	{
 		g_pGameStartUI->Draw();
 	}
-
+	if(g_isGameOverLabelStarted)
+	{
+		g_pGameOverLabel->Draw();
+	}
 }
 
 bool ChangeGame()
 {
-	return g_pField->GetState() == Field::GAMEOVER;
+	return g_isGameOverLabelStarted && g_pGameOverLabel->isFinish();
+}
+
+int GetFinalScore()
+{
+	return g_finalScore;
 }

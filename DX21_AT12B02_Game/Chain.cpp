@@ -34,19 +34,9 @@ Chain::Chain()
 
 Chain::~Chain()
 {
-	delete m_pNumber;
-	m_pNumber = nullptr;
-
-	if (m_pLabelTex)
-	{
-		m_pLabelTex->Release();
-		m_pLabelTex = nullptr;
-	}
-	if (m_pLabelVtx)
-	{
-		m_pLabelVtx->Release();
-		m_pLabelVtx = nullptr;
-	}
+	if(m_pNumber){	delete m_pNumber;	m_pNumber = nullptr; }
+	if (m_pLabelTex){	m_pLabelTex->Release();	m_pLabelTex = nullptr; }
+	if (m_pLabelVtx){	m_pLabelVtx->Release(); m_pLabelVtx = nullptr; }
 }
 
 void Chain::Reset()

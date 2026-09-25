@@ -6,3 +6,4 @@ void UpdateGame();
 void DrawGame();
 
 bool ChangeGame();
+int GetFinalScore();
