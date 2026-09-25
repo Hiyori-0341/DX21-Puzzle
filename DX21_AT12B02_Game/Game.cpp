@@ -1,11 +1,12 @@
 #include "Game.h"
 #include "GameStartUI.h"
+#include "GameMode.h"
 #include "BackGround.h"
 #include "Block.h"
 #include "Sound/Sound.h"
 #include "Field.h"
 #include "GameOverLabel.h"
-
+#include "Title/Title.h"
 
 Field* g_pField;
 BackGround* g_pBackGround;
@@ -16,6 +17,8 @@ int  g_finalScore;
 
 bool InitGame()
 {
+	GameMode mode = GetSelectMode();
+
 	g_pGameStartUI = new GameStartUI();
 	g_pBackGround = new BackGround();
 	g_pField = new Field();

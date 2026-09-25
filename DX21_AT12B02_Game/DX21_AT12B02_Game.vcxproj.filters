@@ -111,6 +111,9 @@
     <ClCompile Include="GameOver.cpp">
       <Filter>GameOver</Filter>
     </ClCompile>
+    <ClCompile Include="Title\TitleModeSelect.cpp">
+      <Filter>Title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input\Keyboard.h">
@@ -193,6 +196,12 @@
     </ClInclude>
     <ClInclude Include="GameOver.h">
       <Filter>GameOver</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMode.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Title\TitleModeSelect.h">
+      <Filter>Title</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

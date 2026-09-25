@@ -153,6 +153,7 @@
     <ClCompile Include="Title\TitleBackGround.cpp" />
     <ClCompile Include="Title\TitleButton.cpp" />
     <ClCompile Include="Title\TitleLogo.cpp" />
+    <ClCompile Include="Title\TitleModeSelect.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +169,7 @@
     <ClInclude Include="Field.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameMode.h" />
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="GameOverLabel.h" />
     <ClInclude Include="GameStartUI.h" />
@@ -182,6 +184,7 @@
     <ClInclude Include="Title\TitleBackGround.h" />
     <ClInclude Include="Title\TitleButton.h" />
     <ClInclude Include="Title\TitleLogo.h" />
+    <ClInclude Include="Title\TitleModeSelect.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
