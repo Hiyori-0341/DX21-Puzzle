@@ -52,7 +52,7 @@
 #define  FALL_WAIT_TIME_STEP (2)	//ブロックが落下するまでの待機時間の減少量(フレーム)
 
 //制限時間設定
-#define TIME_LIMIT (120)	//制限時間(秒)
+#define TIME_LIMIT (30)	//制限時間(秒)
 #define TIME_BONUS_PER_LEVEL (20)	//レベルアップ時の残り時間ボーナス
 
 //表示位置

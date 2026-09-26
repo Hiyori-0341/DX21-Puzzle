@@ -165,10 +165,10 @@ void Field::Update()
 	if(m_state != Field::GAMEOVER && m_remainingTime > 0)
 	{
 		--m_remainingTime;
-		if (m_remainingTime <= 0)
-		{
-			m_state = Field::GAMEOVER;	//制限時間切れでゲームオーバー
-		}
+		//if (m_remainingTime <= 0)
+		//{
+		//	m_state = Field::GAMEOVER;	//制限時間切れでゲームオーバー
+		//}
 	}
 
 	//落下・消滅アニメーションの進行
@@ -426,6 +426,15 @@ void Field::UpdateCheck()
 	else
 	{
 		m_state = Field::CREATE;
+		//時間切れになったらゲームオーバー
+		if(m_remainingTime <= 0)
+		{
+			m_state = Field::GAMEOVER;
+		}
+		else
+		{
+			m_state = Field::CREATE;
+		}
 	}
 }
 
@@ -854,7 +863,7 @@ void Field::AddErasedCount(int count)
 	while(m_level < LEVEL_MAX && m_totalErased >= m_level * LEVEL_UP_ERASE_COUNT)
 	{
 		++m_level;
-		m_remainingTime += TIME_BONUS_PER_LEVEL * m_level / 10;
+		m_remainingTime += (TIME_BONUS_PER_LEVEL + m_level) * FPS;
 	}
 }
 

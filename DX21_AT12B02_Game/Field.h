@@ -38,7 +38,6 @@ public:
 	};
 
 public:
-	Field();
 	explicit Field(GameMode mode);		//explict...型変換による暗黙のコンストラクタ呼び出しを禁止する
 	~Field();
 
