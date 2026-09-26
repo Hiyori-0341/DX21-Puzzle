@@ -118,6 +118,12 @@ void DrawGameOver()
 
 	//最終スコア(GetFinalScoreはField破棄後もGame.cpp側に残った値を返す)
 	g_pNumber->Draw(GetFinalScore(), 50.0f, 0.0f, 24.0f, 32.0f, 6);
+
+	switch (GetFinalMode())
+	{
+		case MODE_MARATHON:		DrawMarathonResult();	break;
+		case MODE_VERSUS:		DrawVersusResult();		break;
+	}
 }
 
 bool ChangeGameOver()
@@ -128,4 +134,16 @@ bool ChangeGameOver()
 bool WantsRetry()
 {
 	return g_wantsRetry;
+}
+
+/// @brief マラソンモードの結果表示
+void DrawMarathonResult()
+{
+	//最終レベル(GetFinalLevelはField破棄後もGame.cpp側に残った値を返す)
+	g_pNumber->Draw(GetFinalLevel(), 50.0f, 60.0f, 24.0f, 32.0f, 2);
+}
+
+/// @brief VSモードの結果表示
+void DrawVersusResult()
+{
 }

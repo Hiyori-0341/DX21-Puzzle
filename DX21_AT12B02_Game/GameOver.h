@@ -7,3 +7,6 @@ void DrawGameOver();
 
 bool ChangeGameOver();
 bool WantsRetry();
+
+void DrawMarathonResult();
+void DrawVersusResult();

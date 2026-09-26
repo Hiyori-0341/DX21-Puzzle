@@ -14,10 +14,13 @@ GameStartUI* g_pGameStartUI;
 GameOverLabel* g_pGameOverLabel;
 bool g_isGameOverLabelStarted;
 int  g_finalScore;
+int  g_finalLevel;
+GameMode g_finalMode;
 
 bool InitGame()
 {
 	GameMode mode = GetSelectMode();
+	g_finalMode = mode;
 
 	g_pGameStartUI = new GameStartUI();
 	g_pBackGround = new BackGround();
@@ -34,6 +37,7 @@ bool InitGame()
 	g_pGameOverLabel = new GameOverLabel();
 	g_isGameOverLabelStarted = false;
 	g_finalScore = 0;
+	g_finalLevel = 0;
 
 	return true;
 }
@@ -79,6 +83,7 @@ void UpdateGame()
 			if (!g_isGameOverLabelStarted)
 			{
 				g_finalScore = g_pField->GetScore();
+				g_finalLevel = g_pField->GetLevel();
 				g_pGameOverLabel->Start();
 				g_isGameOverLabelStarted = true;
 			}
@@ -109,4 +114,14 @@ bool ChangeGame()
 int GetFinalScore()
 {
 	return g_finalScore;
+}
+
+int GetFinalLevel()
+{
+	return g_finalLevel;
+}
+
+GameMode GetFinalMode()
+{
+	return g_finalMode;
 }
