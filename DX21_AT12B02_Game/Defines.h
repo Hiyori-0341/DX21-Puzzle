@@ -51,5 +51,21 @@
 #define  FALL_WAIT_TIME_MIN  (10)	//ブロックが落下するまでの待機時間の最小値(フレーム)
 #define  FALL_WAIT_TIME_STEP (2)	//ブロックが落下するまでの待機時間の減少量(フレーム)
 
+//制限時間設定
+#define TIME_LIMIT (120)	//制限時間(秒)
+#define TIME_BONUS_PER_LEVEL (20)	//レベルアップ時の残り時間ボーナス
 
+//表示位置
+#define LEVEL_POS_X  ( 350.0f)
+#define LEVEL_POS_Y  (-140.0f)
+#define REMAIN_POS_X ( 330.0f)
+#define REMAIN_POS_Y (-100.0f)
+#define TIME_POS_X   ( 355.0f)
+#define TIME_POS_Y   (-180.0f)
+
+#define INFO_POS_X (280.0f)
+#define INFO_POS_Y (-280.0f)
+
+
+//円周率
 constexpr float PI = 3.14159265f;

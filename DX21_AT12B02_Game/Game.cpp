@@ -24,11 +24,11 @@ bool InitGame()
 	
 	if(mode == MODE_MARATHON)
 	{
-		g_pField = new Field();
+		g_pField = new Field(mode);
 	}
 	else if(mode == MODE_VERSUS)
 	{
-		g_pField = new Field();
+		g_pField = new Field(mode);
 	}
 
 	g_pGameOverLabel = new GameOverLabel();

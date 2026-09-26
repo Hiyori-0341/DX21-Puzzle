@@ -3,6 +3,7 @@
 #include "Chain.h"
 #include "Frame.h"
 #include "Score.h"
+#include "Number.h"
 #include "NextTsumo.h"
 #include "VertexBuffer.h"
 #include "DirectXTex/TextureLoad.h"
@@ -16,7 +17,7 @@
 // コンストラクタ / デストラクタ
 //============================================================
 
-Field::Field()
+Field::Field(GameMode mode)
 	: m_pFrameBuf(nullptr)
 	, m_pFrameTex(nullptr)
 	, m_offset{}
@@ -27,15 +28,26 @@ Field::Field()
 	, m_fallTimer(0)
 	, m_quickTurnDirection(0)
 	, m_pBlockDestroySE(nullptr)
+	, m_level(1)
+	, m_totalErased(0)
+	, m_remainingTime(mode == MODE_MARATHON ? TIME_LIMIT * FPS : -1)
 {
 	//フレーム
 	float frameWidth = BLOCK_WIDTH * FIELD_COLUMN + 32.0f;
 	float frameHeight = BLOCK_HEIGHT * FIELD_ROW + 32.0f;
 	m_pFrame = new Frame("Image/UI/FieldFrame.png", frameWidth, frameHeight, { 0.0f, 0.0f });
+
+	float infoFrameWidth = 200.0f;
+	float infoFrameHeight = 140.0f;
+	float2 infoFramePos = { INFO_POS_X, INFO_POS_Y * 0.5f };
+	m_pInfoFrame = new Frame("Image/UI/InfoPanel.png", infoFrameWidth, infoFrameHeight, infoFramePos);
+
 	//数字描画
 	m_pChain = new Chain();
 	//スコア描画
 	m_pScore = new Score();
+	//数字描画
+	m_pInfoNumber = new Number();
 
 	//次のツモ表示
 	for(int i = 0; i < PAIR_NUM; ++i)
@@ -71,6 +83,9 @@ Field::Field()
 	}
 
 	m_pBlockDestroySE = LoadSound("Sound/SE/BlockErase.wav");
+
+	//ゲームモード
+	m_mode = mode;
 }
 
 Field::~Field()
@@ -91,6 +106,18 @@ Field::~Field()
 	{
 		delete m_pScore;
 		m_pScore = nullptr;
+	}
+
+	if(m_pInfoNumber)
+	{
+		delete m_pInfoNumber;
+		m_pInfoNumber = nullptr;
+	}
+
+	if(m_pInfoFrame)
+	{
+		delete m_pInfoFrame;
+		m_pInfoFrame = nullptr;
 	}
 
 	for (int y = 0; y < FIELD_ROW; ++y)
@@ -133,6 +160,16 @@ void Field::Update()
 {
 	m_pChain->Update();
 	m_pScore->Update();
+
+	//制限時間の消費
+	if(m_state != Field::GAMEOVER && m_remainingTime > 0)
+	{
+		--m_remainingTime;
+		if (m_remainingTime <= 0)
+		{
+			m_state = Field::GAMEOVER;	//制限時間切れでゲームオーバー
+		}
+	}
 
 	//落下・消滅アニメーションの進行
 	if (m_state == Field::IDLE || m_state == Field::DESTROY)
@@ -216,6 +253,23 @@ void Field::Draw()
 	//スコアの表示
 	m_pScore->Draw();
 
+	//一人用の時のみ表示
+	if (m_mode == MODE_MARATHON)
+	{
+		//情報パネルの表示
+		m_pInfoFrame->Draw();
+
+		//制限時間の表示
+		if(GetRemainingTime() >= 0)
+		{
+			m_pInfoNumber->Draw(GetRemainingTime(), TIME_POS_X,TIME_POS_Y,DIGIT_WIDTH,DIGIT_HEIGHT,3);
+		}
+
+		//レベル・残り削除数の表示
+		m_pInfoNumber->Draw(GetLevel(), LEVEL_POS_X, LEVEL_POS_Y, DIGIT_WIDTH, DIGIT_HEIGHT, 2);
+		m_pInfoNumber->Draw(GetRemainingToNextLevel(), REMAIN_POS_X, REMAIN_POS_Y, DIGIT_WIDTH, DIGIT_HEIGHT, 3);
+	}
+
 	//リセット
 	SetSpriteColor(1.0f, 1.0f, 1.0f, 1.0f);
 	SetSpriteScale(1.0f, 1.0f);
@@ -239,6 +293,22 @@ int Field::GetScore() const
 int Field::GetLevel() const
 {
 	return m_level;
+}
+
+int Field::GetRemainingTime() const
+{
+	if(m_remainingTime < 0)
+		return -1;
+
+	return m_remainingTime / FPS;
+}
+
+int Field::GetRemainingToNextLevel() const
+{
+	if(m_level >= LEVEL_MAX)
+		return 0;
+
+	return (m_level * LEVEL_UP_ERASE_COUNT) - m_totalErased;
 }
 
 //============================================================
@@ -780,9 +850,11 @@ void Field::AddErasedCount(int count)
 {
 	m_totalErased += count;
 
+	//レベルアップ判定
 	while(m_level < LEVEL_MAX && m_totalErased >= m_level * LEVEL_UP_ERASE_COUNT)
 	{
 		++m_level;
+		m_remainingTime += TIME_BONUS_PER_LEVEL * m_level / 10;
 	}
 }
 

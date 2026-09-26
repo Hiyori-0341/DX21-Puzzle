@@ -6,11 +6,13 @@
 #include "SpriteDrawer.h"
 #include "Sound/Sound.h"
 #include "ColorGenerator.h"
+#include "GameMode.h"
 
 class Chain;
 class NextTsumo;
 class Frame;
 class Score;
+class Number;
 
 //============================================================
 // Field
@@ -37,6 +39,7 @@ public:
 
 public:
 	Field();
+	explicit Field(GameMode mode);		//explict...型変換による暗黙のコンストラクタ呼び出しを禁止する
 	~Field();
 
 	void Update();
@@ -46,6 +49,8 @@ public:
 	int GetChainCount() const;
 	int GetScore() const;
 	int GetLevel() const;
+	int GetRemainingTime() const;
+	int GetRemainingToNextLevel() const;
 
 private:
 	//二次元配列の添え字を示す構造体
@@ -122,6 +127,7 @@ private:
 
 	//フレーム描画
 	Frame* m_pFrame;
+	Frame* m_pInfoFrame;
 
 	//スコア表示
 	Score* m_pScore;
@@ -131,6 +137,7 @@ private:
 
 	//現在の状態
 	State m_state;
+	GameMode m_mode;
 
 	//操作中のペア(着地するまでm_gridには入れない)
 	Block* m_pairBlock[PAIR_NUM];
@@ -141,6 +148,12 @@ private:
 	//レベルシステム
 	int m_level;				//現在のレベル
 	int m_totalErased;          //消去したブロックの総数
+
+	//制限時間
+	int m_remainingTime;		//残り時間(-1なら無制限)
+
+	//数字
+	Number* m_pInfoNumber;
 
 	//サウンド
 	XAUDIO2_BUFFER* m_pBlockDestroySE;
